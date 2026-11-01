@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A&M Code | إدارة التحكم المتقدمة</title>
+    <title>A&M Code | إدارة التحكم ومتابعة الحسابات</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -94,7 +94,7 @@
         }
         .btn-nav-icon:hover { border-color: var(--neon-blue); }
 
-        /* Status Control Bar (مفتوح / مقفل / وقت إضافي) */
+        /* Status Control Banner */
         .status-control-banner {
             background: rgba(15, 23, 42, 0.95);
             border: 1px solid var(--neon-blue);
@@ -152,8 +152,8 @@
             padding: 8px 15px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer;
         }
 
-        /* Order Cards */
-        .order-card {
+        /* Order Cards & Account Cards */
+        .order-card, .account-card {
             background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(10px);
             border: 1px solid var(--border-color);
@@ -267,14 +267,14 @@
                 <div class="brand-icon"><i class="fa-solid fa-sliders"></i></div>
                 <div>
                     <div class="brand-title">إدارة A&M Code الفورية</div>
-                    <div class="brand-sub">التحكم في حالة الطلبات والحظر</div>
+                    <div class="brand-sub">متابعة الحسابات والطلبات</div>
                 </div>
             </div>
             <button class="btn-nav-icon" id="open-drawer-btn"><i class="fa-solid fa-bars"></i></button>
         </div>
 
-        <!-- Status Control Banner (فتح، وقف، أو وقت إضافي) -->
-        <div class="status-control_banner status-control-banner">
+        <!-- Status Control Banner -->
+        <div class="status-control-banner">
             <div>
                 <strong style="color:var(--neon-blue);"><i class="fa-solid fa-clock"></i> حالة استقبال الطلبات للزبائن:</strong>
                 <div style="font-size:0.8rem; color:var(--text-muted);">تعديل الحالة يظهر للزبون فوراً في صفحته</div>
@@ -289,7 +289,8 @@
         <!-- Navigation Pills Bar -->
         <div class="pills-bar">
             <button class="pill-btn active" onclick="switchTab('orders-view', this)"><i class="fa-solid fa-receipt"></i> الفويسات والطلبات</button>
-            <button class="pill-btn" onclick="switchTab('blocked-view', this)"><i class="fa-solid fa-ban"></i> الأرقام المحظورة (بلوك)</button>
+            <button class="pill-btn" onclick="switchTab('accounts-view', this)"><i class="fa-solid fa-user-plus"></i> الحسابات المضافة</button>
+            <button class="pill-btn" onclick="switchTab('blocked-view', this)"><i class="fa-solid fa-ban"></i> البلوك</button>
             <button class="pill-btn" onclick="switchTab('age-verify-view', this)"><i class="fa-solid fa-id-card"></i> التأكد من العمر</button>
             <button class="pill-btn" onclick="switchTab('services-view', this)"><i class="fa-solid fa-list-check"></i> الخدمات</button>
             <button class="pill-btn" onclick="switchTab('settings-view', this)"><i class="fa-solid fa-gear"></i> الإعدادات</button>
@@ -304,7 +305,16 @@
             <div id="queue-container"></div>
         </div>
 
-        <!-- VIEW 2: BLOCKED USERS -->
+        <!-- VIEW 2: ADDED ACCOUNTS (الحسابات المضافة حديثاً) -->
+        <div id="accounts-view" class="tab-view">
+            <div class="section-bar">
+                <div class="section-title"><i class="fa-solid fa-users-viewfinder" style="color:var(--neon-blue);"></i> سجل الحسابات المضافة للزبائن</div>
+                <button class="btn-action-main" onclick="renderAddedAccounts()"><i class="fa-solid fa-rotate-right"></i> تحديث</button>
+            </div>
+            <div id="accounts-container"></div>
+        </div>
+
+        <!-- VIEW 3: BLOCKED USERS -->
         <div id="blocked-view" class="tab-view">
             <div class="section-bar">
                 <div class="section-title"><i class="fa-solid fa-ban" style="color:var(--bright-red);"></i> قائمة العملاء المحظورين (بلوك)</div>
@@ -314,7 +324,7 @@
             </div>
         </div>
 
-        <!-- VIEW 3: AGE VERIFICATION SYSTEM -->
+        <!-- VIEW 4: AGE VERIFICATION SYSTEM -->
         <div id="age-verify-view" class="tab-view">
             <div class="section-bar">
                 <div class="section-title"><i class="fa-solid fa-shield-check"></i> منظومة التأكد من العمر والأمان</div>
@@ -332,7 +342,7 @@
             </div>
         </div>
 
-        <!-- VIEW 4: SERVICES -->
+        <!-- VIEW 5: SERVICES -->
         <div id="services-view" class="tab-view">
             <div class="section-bar">
                 <div class="section-title"><i class="fa-solid fa-laptop-code"></i> إدارة قائمة الخدمات</div>
@@ -353,7 +363,7 @@
             <div id="services-list-box"></div>
         </div>
 
-        <!-- VIEW 5: SETTINGS -->
+        <!-- VIEW 6: SETTINGS -->
         <div id="settings-view" class="tab-view">
             <div class="section-bar">
                 <div class="section-title"><i class="fa-solid fa-sliders"></i> إعدادات الأرقام والتواصل</div>
@@ -382,7 +392,8 @@
         </div>
         <ul class="drawer-nav-list">
             <li class="drawer-nav-item" onclick="switchTab('orders-view'); closeDrawer();">فويسات والطلبات</li>
-            <li class="drawer-nav-item" onclick="switchTab('blocked-view'); closeDrawer();">الأرقام المحظورة (بلوك)</li>
+            <li class="drawer-nav-item" onclick="switchTab('accounts-view'); closeDrawer();">الحسابات المضافة</li>
+            <li class="drawer-nav-item" onclick="switchTab('blocked-view'); closeDrawer();">البلوك</li>
             <li class="drawer-nav-item" onclick="switchTab('age-verify-view'); closeDrawer();">منظومة التأكد من العمر</li>
             <li class="drawer-nav-item" onclick="switchTab('services-view'); closeDrawer();">إدارة الخدمات</li>
             <li class="drawer-nav-item" onclick="switchTab('settings-view'); closeDrawer();">الإعدادات العامة</li>
@@ -393,7 +404,6 @@
         let phone1 = localStorage.getItem('p1') || "201148041323";
         let phone2 = localStorage.getItem('p2') || "201279364446";
 
-        // Load Global Status
         document.getElementById('global-system-status').value = localStorage.getItem('am_system_status') || 'open';
 
         function updateGlobalStatus() {
@@ -445,6 +455,7 @@
             }
 
             if (viewId === 'orders-view') renderQueueOrders();
+            if (viewId === 'accounts-view') renderAddedAccounts();
             if (viewId === 'blocked-view') renderBlockedUsers();
             if (viewId === 'services-view') renderServices();
         }
@@ -518,6 +529,50 @@
             });
         }
 
+        // Render Added Accounts (قسم الحسابات المضافة)
+        function renderAddedAccounts() {
+            const container = document.getElementById('accounts-container');
+            container.innerHTML = '';
+            
+            // جلب الحسابات المسجلة من الـ localStorage (اللي الزبون بيضيفها من صفحته)
+            let accounts = JSON.parse(localStorage.getItem('am_registered_accounts')) || [
+                { id: 1, name: "عبد الرحمن", phone: "01148041323", age: "16 سنة", regDate: "اليوم - 2026", avatar: "https://via.placeholder.com/50" }
+            ];
+
+            if (accounts.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:30px;">لا توجد حسابات مضافة حتى الآن</div>`;
+                return;
+            }
+
+            accounts.forEach(acc => {
+                const card = document.createElement('div');
+                card.className = 'account-card';
+                card.innerHTML = `
+                    <div class="client-header-flex">
+                        <img src="${acc.avatar || 'https://via.placeholder.com/50'}" class="client-avatar" alt="صورة الحساب">
+                        <div class="client-info">
+                            <strong>اسم الحساب:</strong> ${acc.name || 'بدون اسم'} <br>
+                            <strong>رقم الهاتف:</strong> ${acc.phone} <br>
+                            <strong>العمر:</strong> ${acc.age || 'غير محدد'} | <strong>تاريخ التسجيل:</strong> ${acc.regDate || 'حديث'}
+                        </div>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap:6px; border-top:1px solid var(--border-color); padding-top:10px;">
+                        <button class="btn-card-action btn-delete" onclick="deleteAccount(${acc.id})"><i class="fa-solid fa-trash"></i> حذف الحساب</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function deleteAccount(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الحساب المسجل؟')) {
+                let accounts = JSON.parse(localStorage.getItem('am_registered_accounts')) || [];
+                accounts = accounts.filter(a => a.id !== id);
+                localStorage.setItem('am_registered_accounts', JSON.stringify(accounts));
+                renderAddedAccounts();
+            }
+        }
+
         function updateOrderStatus(id, newStatus) {
             let orders = JSON.parse(localStorage.getItem('am_code_orders')) || [];
             orders = orders.map(o => {
@@ -528,7 +583,6 @@
             renderQueueOrders();
         }
 
-        // Block User & Phone Functionality
         function blockUser(phone, orderId) {
             if (confirm(`هل أنت متأكد من حظر الرقم (${phone}) وإضافته لقائمة البلوك؟`)) {
                 let blockedList = JSON.parse(localStorage.getItem('am_blocked_numbers')) || [];
@@ -604,6 +658,8 @@
         function saveSettings() {
             phone1 = document.getElementById('setting-p1').value.trim();
             phone2 = document.getElementById('setting-p2').value.trim();
+            localStorage.setItem('p1', phone1);
+            localStorage.setItem('p2',            phone2 = document.getElementById('setting-p2').value.trim();
             localStorage.setItem('p1', phone1);
             localStorage.setItem('p2', phone2);
             alert('تم حفظ الأرقام بنجاح!');
