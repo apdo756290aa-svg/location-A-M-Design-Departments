@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A&M Code | لوحة التحكم والتسلسل</title>
+    <title>A&M Code | لوحة التحكم المتكاملة والمحدثة</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -33,7 +33,7 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 50px;
+            padding-bottom: 60px;
             overflow-x: hidden;
         }
 
@@ -56,7 +56,7 @@
             z-index: 1;
         }
 
-        /* Header Navigation */
+        /* Top Navbar */
         .top-navbar {
             background: rgba(15, 23, 42, 0.9);
             backdrop-filter: blur(10px);
@@ -66,7 +66,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .nav-brand {
@@ -91,39 +91,90 @@
         .brand-title { font-weight: 800; font-size: 1rem; color: var(--text-main); }
         .brand-sub { font-size: 0.75rem; color: var(--neon-blue); }
 
-        .btn-refresh {
+        .btn-nav-icon {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 8px 16px;
+            width: 38px;
+            height: 38px;
             border-radius: 8px;
-            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .btn-nav-icon:hover { border-color: var(--neon-blue); }
+
+        /* Navigation Pills Bar (الأقسام القديمة بالكامل) */
+        .pills-bar {
+            display: flex;
             gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        .pill-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 20px;
             font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             transition: 0.2s;
         }
 
-        .btn-refresh:hover { border-color: var(--neon-blue); }
-
-        /* Queue / Sorting Alert Bar */
-        .queue-info-bar {
-            background: rgba(0, 210, 255, 0.08);
-            border: 1px solid var(--neon-blue);
-            border-radius: 12px;
-            padding: 12px 15px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.88rem;
-            color: var(--neon-blue);
-            font-weight: 700;
+        .pill-btn.active, .pill-btn:hover {
+            background: var(--dark-red);
+            color: #fff;
+            border-color: var(--bright-red);
         }
 
-        /* Order Cards Layout */
+        /* Views management */
+        .tab-view { display: none; }
+        .tab-view.active { display: block; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--neon-blue);
+        }
+
+        .btn-action-main {
+            background: var(--neon-blue);
+            color: #000;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        /* Order Cards بالترتيب بالدور (FIFO) */
         .order-card {
             background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(10px);
@@ -132,7 +183,6 @@
             padding: 18px;
             margin-bottom: 15px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            position: relative;
         }
 
         .order-card.first-in-queue {
@@ -144,7 +194,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .queue-badge {
@@ -153,7 +203,7 @@
             font-weight: 900;
             padding: 4px 12px;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         .queue-badge.priority-1 {
@@ -161,29 +211,30 @@
             color: #fff;
         }
 
-        .order-time {
-            font-size: 0.78rem;
-            color: var(--text-muted);
+        .payment-pill {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
         }
 
         .client-info {
             color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 12px;
-            line-height: 1.6;
+            font-size: 0.88rem;
+            margin-bottom: 10px;
+            line-height: 1.5;
         }
-
-        .client-info strong {
-            color: var(--text-main);
-        }
+        .client-info strong { color: var(--text-main); }
 
         .order-details-box {
             background: var(--bg-inner);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 15px;
-            font-size: 0.88rem;
+            padding: 10px;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
             color: #cbd5e1;
         }
 
@@ -192,22 +243,19 @@
             justify-content: space-between;
             align-items: center;
             border-top: 1px solid var(--border-color);
-            padding-top: 12px;
+            padding-top: 10px;
         }
 
-        .action-btns {
-            display: flex;
-            gap: 8px;
-        }
+        .action-btns-group { display: flex; gap: 8px; }
 
-        .btn-act {
+        .btn-card-action {
             height: 35px;
             border-radius: 8px;
             border: none;
             cursor: pointer;
             font-weight: 700;
             font-size: 0.8rem;
-            padding: 0 12px;
+            padding: 0 10px;
             display: flex;
             align-items: center;
             gap: 5px;
@@ -219,7 +267,67 @@
         .btn-wa-a { background: rgba(0, 210, 255, 0.15); color: var(--neon-blue); border: 1px solid rgba(0, 210, 255, 0.3); }
         .btn-wa-m { background: rgba(255, 42, 95, 0.15); color: var(--bright-red); border: 1px solid rgba(255, 42, 95, 0.3); }
 
-        .btn-done { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        /* General Info Cards for other tabs */
+        .info-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 0.88rem; color: var(--text-muted); }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-inner);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: #fff;
+            outline: none;
+        }
+
+        /* Drawer Overlay */
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 100;
+            display: none;
+        }
+
+        .drawer-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background: #0d1527;
+            border-left: 1px solid var(--border-color);
+            z-index: 101;
+            padding: 20px;
+            transition: 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drawer-menu.active { right: 0; }
+        .drawer-overlay.active { display: block; }
+
+        .drawer-nav-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .drawer-nav-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .drawer-nav-item:hover { background: var(--dark-red); color: #fff; }
     </style>
 </head>
 <body>
@@ -230,28 +338,101 @@
         <!-- Top Navbar -->
         <div class="top-navbar">
             <div class="nav-brand">
-                <div class="brand-icon"><i class="fa-solid fa-list-ol"></i></div>
+                <div class="brand-icon"><i class="fa-solid fa-gauge-high"></i></div>
                 <div>
-                    <div class="brand-title">إدارة الطلبات بالدور والتسلسل</div>
-                    <div class="brand-sub">A&M CODE ADMIN</div>
+                    <div class="brand-title">إدارة A&M Code</div>
+                    <div class="brand-sub">لوحة التحكم الشاملة</div>
                 </div>
             </div>
-            <button class="btn-refresh" onclick="renderQueueOrders()"><i class="fa-solid fa-rotate-right"></i> تحديث الأدوار</button>
+            <div style="display:flex; gap:8px;">
+                <button class="btn-nav-icon" id="open-drawer-btn"><i class="fa-solid fa-bars"></i></button>
+            </div>
         </div>
 
-        <!-- Info Header -->
-        <div class="queue-info-bar">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-            <span>الطلبات مرتبة تلقائياً من **الأقدم للأحدث** (الطلب رقم 1 هو اللي جه الأول بالدور).</span>
+        <!-- Navigation Pills Bar (كل الميزات القديمة والأقسام المتاحة) -->
+        <div class="pills-bar">
+            <button class="pill-btn active" onclick="switchTab('orders-view', this)"><i class="fa-solid fa-receipt"></i> الطلبات بالدور</button>
+            <button class="pill-btn" onclick="switchTab('services-view', this)"><i class="fa-solid fa-list-check"></i> إدارة الخدمات</button>
+            <button class="pill-btn" onclick="switchTab('clients-view', this)"><i class="fa-solid fa-users"></i> سجل العملاء</button>
+            <button class="pill-btn" onclick="switchTab('settings-view', this)"><i class="fa-solid fa-gear"></i> الإعدادات العامة</button>
         </div>
 
-        <!-- Orders Container -->
-        <div id="queue-container"></div>
+        <!-- VIEW 1: ORDERS (بالدور والتسلسل الزمني) -->
+        <div id="orders-view" class="tab-view active">
+            <div class="section-bar">
+                <div class="section-title"><i class="fa-solid fa-list-ol"></i> قائمة الانتظار (بالدور)</div>
+                <button class="btn-action-main" onclick="renderQueueOrders()"><i class="fa-solid fa-rotate-right"></i> تحديث</button>
+            </div>
+            <div id="queue-container"></div>
+        </div>
+
+        <!-- VIEW 2: SERVICES -->
+        <div id="services-view" class="tab-view">
+            <div class="section-bar">
+                <div class="section-title"><i class="fa-solid fa-laptop-code"></i> إدارة قائمة الخدمات</div>
+            </div>
+            <div class="info-card">
+                <h3>إضافة خدمة برمجية جديدة:</h3>
+                <br>
+                <div class="form-group">
+                    <label>اسم الخدمة:</label>
+                    <input type="text" id="new-service-name" placeholder="مثال: موقع صيدلية / متجر">
+                </div>
+                <div class="form-group">
+                    <label>السعر التقديري:</label>
+                    <input type="text" id="new-service-price" placeholder="مثال: 1500 جنيه">
+                </div>
+                <button class="btn-action-main" style="width:100%;" onclick="addService()">إضافة للأنظمة</button>
+            </div>
+            <div id="services-list-box"></div>
+        </div>
+
+        <!-- VIEW 3: CLIENTS -->
+        <div id="clients-view" class="tab-view">
+            <div class="section-bar">
+                <div class="section-title"><i class="fa-solid fa-users"></i> سجل العملاء المسجلين</div>
+            </div>
+            <div class="info-card" id="clients-list-box"></div>
+        </div>
+
+        <!-- VIEW 4: SETTINGS -->
+        <div id="settings-view" class="tab-view">
+            <div class="section-bar">
+                <div class="section-title"><i class="fa-solid fa-sliders"></i> إعدادات الأرقام والتواصل</div>
+            </div>
+            <div class="info-card">
+                <div class="form-group">
+                    <label>رقم عبد الرحمن (واتساب):</label>
+                    <input type="text" id="setting-p1" value="01148041323">
+                </div>
+                <div class="form-group">
+                    <label>رقم محمود (واتساب):</label>
+                    <input type="text" id="setting-p2" value="01279364446">
+                </div>
+                <button class="btn-action-main" style="width:100%;" onclick="saveSettings()">حفظ الأرقام</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Slide Drawer -->
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+    <div class="drawer-menu" id="drawer-menu">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <div style="font-weight:800; color:var(--neon-blue);"><i class="fa-solid fa-compass"></i> الأقسام السريعة</div>
+            <button class="btn-nav-icon" id="close-drawer-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <ul class="drawer-nav-list">
+            <li class="drawer-nav-item" onclick="switchTab('orders-view'); closeDrawer();">الطلبات بالدور</li>
+            <li class="drawer-nav-item" onclick="switchTab('services-view'); closeDrawer();">إدارة الخدمات</li>
+            <li class="drawer-nav-item" onclick="switchTab('clients-view'); closeDrawer();">سجل العملاء</li>
+            <li class="drawer-nav-item" onclick="switchTab('settings-view'); closeDrawer();">الإعدادات العامة</li>
+        </ul>
     </div>
 
     <script>
-        const phone1 = "201148041323"; // عبد الرحمن
-        const phone2 = "201279364446"; // محمود
+        let phone1 = localStorage.getItem('p1') || "201148041323";
+        let phone2 = localStorage.getItem('p2') || "201279364446";
 
         // Canvas Effect
         const canvas = document.getElementById('binary-canvas');
@@ -281,14 +462,32 @@
         }
         setInterval(drawBinary, 33);
 
-        // Fetch & Sort Orders FIFO (First In, First Out)
+        let services = [
+            { name: "مواقع المطاعم والمنيو", price: "800 جنيه" },
+            { name: "مواقع الصيدليات والمتاجر", price: "1200 جنيه" }
+        ];
+
+        // Switch View Tab Function
+        function switchTab(viewId, btn = null) {
+            document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+
+            if (btn) {
+                document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+
+            if (viewId === 'orders-view') renderQueueOrders();
+            if (viewId === 'services-view') renderServices();
+            if (viewId === 'clients-view') renderClients();
+        }
+
+        // Fetch & Sort Orders FIFO (الأول فالأول حسب الدور)
         function getOrdersSorted() {
             let orders = JSON.parse(localStorage.getItem('am_code_orders')) || [
-                { id: 101, name: "صيدلية الأمل", phone: "01012345678", desc: "موقع صيدلية متكامل مع خدمة توصيل", timestamp: 1700000000000, timeStr: "منذ 10 دقائق" },
-                { id: 102, name: "صيدلية الشفاء", phone: "01198765432", desc: "طلب موقع صيدلية مشابه ولكن بعده بدقيقة", timestamp: 1700000060000, timeStr: "منذ 9 دقائق" }
+                { id: 101, name: "صيدلية الأمل", phone: "01012345678", desc: "طلب موقع صيدليه اول", timestamp: 1700000000000 },
+                { id: 102, name: "صيدلية الشفاء", phone: "01198765432", desc: "طلب موقع صيدليه تاني بعدها بدقيقة", timestamp: 1700000060000 }
             ];
-
-            // الترتيب الصاعد: الأقدم زمانياً يظهر أولاً (الأولوية للرقم 1)
             orders.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
             return orders;
         }
@@ -296,16 +495,15 @@
         function renderQueueOrders() {
             const container = document.getElementById('queue-container');
             container.innerHTML = '';
-
             const sortedOrders = getOrdersSorted();
 
             if (sortedOrders.length === 0) {
-                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:40px;">لا توجد طلبات في الانتظار حالياً.</div>`;
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:30px;">لا توجد طلبات في الانتظار حالياً</div>`;
                 return;
             }
 
             sortedOrders.forEach((order, index) => {
-                const queueNumber = index + 1; // ترتيب الدور: 1، 2، 3...
+                const queueNumber = index + 1;
                 const card = document.createElement('div');
                 card.className = `order-card ${queueNumber === 1 ? 'first-in-queue' : ''}`;
 
@@ -314,21 +512,20 @@
                         <div class="queue-badge ${queueNumber === 1 ? 'priority-1' : ''}">
                             ${queueNumber === 1 ? '🔴 الأول بالدور (#1)' : 'الدور رقم #' + queueNumber}
                         </div>
-                        <div class="order-time"><i class="fa-regular fa-clock"></i> ${order.timeStr || 'طلب مسجل'}</div>
+                        <div class="payment-pill">كاش عند الاستلام</div>
                     </div>
                     <div class="client-info">
-                        <strong>العميل:</strong> ${order.name} | <strong>الهاتف:</strong> ${order.phone}
+                        <strong>العميل:</strong> ${order.name || 'عميل'} | <strong>الهاتف:</strong> ${order.phone}
                     </div>
                     <div class="order-details-box">
-                        <strong>تفاصيل الطلب:</strong> ${order.desc}
+                        <strong>التفاصيل:</strong> ${order.desc || order.type || 'طلب جديد'}
                     </div>
                     <div class="card-bottom">
-                        <div class="action-btns">
-                            <button class="btn-act btn-delete" onclick="deleteOrder(${order.id})" title="حذف الطلب بعد الانتهاء"><i class="fa-solid fa-trash"></i></button>
-                            <button class="btn-act btn-wa-a" onclick="shareWhatsApp('${phone1}', ${queueNumber}, '${order.name}', '${order.desc}')"><i class="fa-brands fa-whatsapp"></i> عبدو</button>
-                            <button class="btn-act btn-wa-m" onclick="shareWhatsApp('${phone2}', ${queueNumber}, '${order.name}', '${order.desc}')"><i class="fa-brands fa-whatsapp"></i> محمود</button>
+                        <div class="action-btns-group">
+                            <button class="btn-card-action btn-delete" onclick="deleteOrder(${order.id})" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                            <button class="btn-card-action btn-wa-a" onclick="shareWhatsApp('${phone1}', ${queueNumber}, '${order.name}', '${order.desc || order.type}')"><i class="fa-brands fa-whatsapp"></i> عبدو</button>
+                            <button class="btn-card-action btn-wa-m" onclick="shareWhatsApp('${phone2}', ${queueNumber}, '${order.name}', '${order.desc || order.type}')"><i class="fa-brands fa-whatsapp"></i> محمود</button>
                         </div>
-                        <button class="btn-act btn-done" onclick="finishOrder(${order.id})"><i class="fa-solid fa-check"></i> تم التنفيذ</button>
                     </div>
                 `;
                 container.appendChild(card);
@@ -336,7 +533,7 @@
         }
 
         function deleteOrder(id) {
-            if (confirm('هل تريد إزالة هذا الطلب من الدور؟')) {
+            if (confirm('هل أنت متأكد من إزالة الطلب من القائمة؟')) {
                 let orders = JSON.parse(localStorage.getItem('am_code_orders')) || [];
                 orders = orders.filter(o => o.id !== id);
                 localStorage.setItem('am_code_orders', JSON.stringify(orders));
@@ -344,15 +541,58 @@
             }
         }
 
-        function finishOrder(id) {
-            alert('تم تعليم الطلب كمكتمل وسينتقل الطلب التالي ليكون رقم #1 تلقائياً!');
-            deleteOrder(id);
-        }
-
         function shareWhatsApp(phone, queueNum, clientName, desc) {
-            let msg = `📌 طلب بالدور رقم (#${queueNum}):\n👤 العميل: ${clientName}\n📝 التفاصيل: ${desc}`;
+            let msg = `📌 طلب بالدور رقم (#${queueNum}):\n👤 العميل: ${clientName || 'غير مسجل'}\n📝 التفاصيل: ${desc}`;
             window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
+
+        function renderServices() {
+            const box = document.getElementById('services-list-box');
+            box.innerHTML = services.map(s => `
+                <div class="info-card" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div><strong>${s.name}</strong></div>
+                    <div style="color:var(--neon-blue); font-weight:800;">${s.price}</div>
+                </div>
+            `).join('');
+        }
+
+        function addService() {
+            const name = document.getElementById('new-service-name').value.trim();
+            const price = document.getElementById('new-service-price').value.trim();
+            if (name && price) {
+                services.push({ name, price });
+                renderServices();
+                document.getElementById('new-service-name').value = '';
+                document.getElementById('new-service-price').value = '';
+                alert('تمت إضافة الخدمة بنجاح!');
+            }
+        }
+
+        function renderClients() {
+            const box = document.getElementById('clients-list-box');
+            const orders = getOrdersSorted();
+            box.innerHTML = orders.map(o => `
+                <div style="padding:8px 0; border-bottom:1px solid var(--border-color);">
+                    👤 <strong>${o.name || 'مجهول'}</strong> - 📞 ${o.phone}
+                </div>
+            `).join('') || 'لا توجد عملاء مسجلين بعد.';
+        }
+
+        function saveSettings() {
+            phone1 = document.getElementById('setting-p1').value.trim();
+            phone2 = document.getElementById('setting-p2').value.trim();
+            localStorage.setItem('p1', phone1);
+            localStorage.setItem('p2', phone2);
+            alert('تم حفظ الأرقام وتحديثها بنجاح!');
+        }
+
+        // Drawer
+        const drawerMenu = document.getElementById('drawer-menu');
+        const drawerOverlay = document.getElementById('drawer-overlay');
+        document.getElementById('open-drawer-btn').onclick = () => { drawerMenu.classList.add('active'); drawerOverlay.classList.add('active'); };
+        document.getElementById('close-drawer-btn').onclick = closeDrawer;
+        drawerOverlay.onclick = closeDrawer;
+        function closeDrawer() { drawerMenu.classList.remove('active'); drawerOverlay.classList.remove('active'); }
 
         // Initial Load
         renderQueueOrders();
