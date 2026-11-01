@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A&M Code | إدارة التحكم التفاعلية الشاملة</title>
+    <title>A&M Code | إدارة التحكم السحابية (Supabase)</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Supabase JS Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         :root {
             --bg-dark: #070a12;
@@ -271,7 +274,7 @@
                 <div class="brand-icon"><i class="fa-solid fa-sliders"></i></div>
                 <div>
                     <div class="brand-title">إدارة A&M Code الفورية</div>
-                    <div class="brand-sub">التحكم التام والفعال</div>
+                    <div class="brand-sub">مربوط بقاعدة بيانات Supabase 🚀</div>
                 </div>
             </div>
             <button class="btn-nav-icon" id="open-drawer-btn"><i class="fa-solid fa-bars"></i></button>
@@ -303,10 +306,10 @@
         <!-- VIEW 1: ORDERS & VOICE NOTES -->
         <div id="orders-view" class="tab-view active">
             <div class="section-bar">
-                <div class="section-title"><i class="fa-solid fa-microphone-lines"></i> طلبات الفويسات والصور بالدور</div>
+                <div class="section-title"><i class="fa-solid fa-microphone-lines"></i> طلبات الفويسات والصور بالدور (Supabase)</div>
                 <button class="btn-action-main" onclick="renderQueueOrders()"><i class="fa-solid fa-rotate-right"></i> تحديث</button>
             </div>
-            <div id="queue-container"></div>
+            <div id="queue-container">جارٍ تحميل الطلبات من السحاب...</div>
         </div>
 
         <!-- VIEW 2: ADDED ACCOUNTS -->
@@ -315,7 +318,7 @@
                 <div class="section-title"><i class="fa-solid fa-users-viewfinder" style="color:var(--neon-blue);"></i> سجل الحسابات المضافة للزبائن</div>
                 <button class="btn-action-main" onclick="renderAddedAccounts()"><i class="fa-solid fa-rotate-right"></i> تحديث</button>
             </div>
-            <div id="accounts-container"></div>
+            <div id="accounts-container">جارٍ تحميل الحسابات...</div>
         </div>
 
         <!-- VIEW 3: BLOCKED USERS -->
@@ -405,6 +408,11 @@
     </div>
 
     <script>
+        // Supabase Client Initialization
+        const SUPABASE_URL = 'https://qmvnobnkzdqgasollkzv.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_AETlvXHTGMEtQPQCQOhEKQ_Bn7tJX0K';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         let phone1 = localStorage.getItem('p1') || "201148041323";
         let phone2 = localStorage.getItem('p2') || "201279364446";
 
@@ -465,23 +473,29 @@
             if (viewId === 'services-view') renderServices();
         }
 
-        function getOrdersSorted() {
-            let orders = JSON.parse(localStorage.getItem('am_code_orders')) || [];
-            orders.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
-            return orders;
-        }
-
-        function renderQueueOrders() {
+        // Fetch Orders from Supabase (FIFO Ordered)
+        async function renderQueueOrders() {
             const container = document.getElementById('queue-container');
-            container.innerHTML = '';
-            const sortedOrders = getOrdersSorted();
+            container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">جارٍ الجلب من السحاب...</div>`;
 
-            if (sortedOrders.length === 0) {
+            let { data: orders, error } = await _supabase
+                .from('orders')
+                .select('*')
+                .order('timestamp', { ascending: true });
+
+            if (error) {
+                // Fallback to localStorage if table doesn't exist yet or connection issue
+                console.warn("Supabase fetch error, using local storage fallback", error);
+                orders = JSON.parse(localStorage.getItem('am_code_orders')) || [];
+            }
+
+            container.innerHTML = '';
+            if (!orders || orders.length === 0) {
                 container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:30px;">لا توجد طلبات أو فويسات واردة حالياً</div>`;
                 return;
             }
 
-            sortedOrders.forEach((order, index) => {
+            orders.forEach((order, index) => {
                 const queueNumber = index + 1;
                 const card = document.createElement('div');
                 card.className = `order-card ${queueNumber === 1 ? 'first-in-queue' : ''}`;
@@ -519,10 +533,10 @@
 
                     <div class="card-bottom">
                         <div class="action-btns-group">
-                            <button class="btn-card-action btn-accept" onclick="updateOrderStatus(${order.id}, 'مقبول')"><i class="fa-solid fa-check"></i> قبول</button>
-                            <button class="btn-card-action btn-reject" onclick="updateOrderStatus(${order.id}, 'مرفوض')"><i class="fa-solid fa-xmark"></i> رفض</button>
-                            <button class="btn-card-action btn-block" onclick="blockUser('${order.phone}', ${order.id})"><i class="fa-solid fa-ban"></i> بلوك</button>
-                            <button class="btn-card-action btn-delete" onclick="deleteOrder(${order.id})" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                            <button class="btn-card-action btn-accept" onclick="updateOrderStatus('${order.id}', 'مقبول')"><i class="fa-solid fa-check"></i> قبول</button>
+                            <button class="btn-card-action btn-reject" onclick="updateOrderStatus('${order.id}', 'مرفوض')"><i class="fa-solid fa-xmark"></i> رفض</button>
+                            <button class="btn-card-action btn-block" onclick="blockUser('${order.phone}', '${order.id}')"><i class="fa-solid fa-ban"></i> بلوك</button>
+                            <button class="btn-card-action btn-delete" onclick="deleteOrder('${order.id}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
                         </div>
                         <div class="action-btns-group">
                             <button class="btn-card-action btn-wa-a" onclick="shareWhatsApp('${phone1}', ${queueNumber}, '${order.name}', '${order.desc}')"><i class="fa-brands fa-whatsapp"></i> عبدو</button>
@@ -534,14 +548,18 @@
             });
         }
 
-        // Render Added Accounts
-        function renderAddedAccounts() {
+        // Render Added Accounts from Supabase
+        async function renderAddedAccounts() {
             const container = document.getElementById('accounts-container');
-            container.innerHTML = '';
+            container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">جارٍ تحميل الحسابات...</div>`;
             
-            let accounts = JSON.parse(localStorage.getItem('am_registered_accounts')) || [];
+            let { data: accounts, error } = await _supabase.from('accounts').select('*');
+            if (error) {
+                accounts = JSON.parse(localStorage.getItem('am_registered_accounts')) || [];
+            }
 
-            if (accounts.length === 0) {
+            container.innerHTML = '';
+            if (!accounts || accounts.length === 0) {
                 container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:30px;">لا توجد حسابات مضافة حتى الآن</div>`;
                 return;
             }
@@ -559,73 +577,59 @@
                         </div>
                     </div>
                     <div style="display:flex; justify-content:flex-end; gap:6px; border-top:1px solid var(--border-color); padding-top:10px;">
-                        <button class="btn-card-action btn-delete" onclick="deleteAccount(${acc.id})"><i class="fa-solid fa-trash"></i> حذف الحساب</button>
+                        <button class="btn-card-action btn-delete" onclick="deleteAccount('${acc.id}')"><i class="fa-solid fa-trash"></i> حذف الحساب</button>
                     </div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function deleteAccount(id) {
+        async function deleteAccount(id) {
             if (confirm('هل أنت متأكد من حذف هذا الحساب المسجل؟')) {
-                let accounts = JSON.parse(localStorage.getItem('am_registered_accounts')) || [];
-                accounts = accounts.filter(a => a.id !== id);
-                localStorage.setItem('am_registered_accounts', JSON.stringify(accounts));
+                await _supabase.from('accounts').delete().eq('id', id);
                 renderAddedAccounts();
             }
         }
 
-        function updateOrderStatus(id, newStatus) {
-            let orders = JSON.parse(localStorage.getItem('am_code_orders')) || [];
-            orders = orders.map(o => {
-                if (o.id === id) o.status = newStatus;
-                return o;
-            });
-            localStorage.setItem('am_code_orders', JSON.stringify(orders));
+        async function updateOrderStatus(id, newStatus) {
+            await _supabase.from('orders').update({ status: newStatus }).eq('id', id);
             renderQueueOrders();
         }
 
-        function blockUser(phone, orderId) {
+        async function blockUser(phone, orderId) {
             if (confirm(`هل أنت متأكد من حظر الرقم (${phone}) وإضافته لقائمة البلوك؟`)) {
-                let blockedList = JSON.parse(localStorage.getItem('am_blocked_numbers')) || [];
-                if (!blockedList.includes(phone)) {
-                    blockedList.push(phone);
-                    localStorage.setItem('am_blocked_numbers', JSON.stringify(blockedList));
-                }
-                updateOrderStatus(orderId, 'محظور');
+                await _supabase.from('blocked_users').insert([{ phone }]);
+                await updateOrderStatus(orderId, 'محظور');
                 alert('تم حظر الرقم بنجاح!');
                 renderQueueOrders();
             }
         }
 
-        function renderBlockedUsers() {
+        async function renderBlockedUsers() {
             const box = document.getElementById('blocked-list-box');
-            let blockedList = JSON.parse(localStorage.getItem('am_blocked_numbers')) || [];
-            if (blockedList.length === 0) {
+            let { data: blockedList } = await _supabase.from('blocked_users').select('*');
+            
+            if (!blockedList || blockedList.length === 0) {
                 box.innerHTML = `<p style="color:var(--text-muted); font-size:0.88rem;">لا توجد أرقام محظورة حالياً.</p>`;
                 return;
             }
-            box.innerHTML = blockedList.map(num => `
+            box.innerHTML = blockedList.map(item => `
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color);">
-                    <span>🚫 رقم محظور: <strong>${num}</strong></span>
-                    <button class="btn-card-action btn-accept" onclick="unblockUser('${num}')">إلغاء الحظر</button>
+                    <span>🚫 رقم محظور: <strong>${item.phone}</strong></span>
+                    <button class="btn-card-action btn-accept" onclick="unblockUser('${item.id}')">إلغاء الحظر</button>
                 </div>
             `).join('');
         }
 
-        function unblockUser(phone) {
-            let blockedList = JSON.parse(localStorage.getItem('am_blocked_numbers')) || [];
-            blockedList = blockedList.filter(n => n !== phone);
-            localStorage.setItem('am_blocked_numbers', JSON.stringify(blockedList));
+        async function unblockUser(id) {
+            await _supabase.from('blocked_users').delete().eq('id', id);
             renderBlockedUsers();
             alert('تم إلغاء الحظر عن الرقم.');
         }
 
-        function deleteOrder(id) {
+        async function deleteOrder(id) {
             if (confirm('حذف هذا الطلب نهائياً؟')) {
-                let orders = JSON.parse(localStorage.getItem('am_code_orders')) || [];
-                orders = orders.filter(o => o.id !== id);
-                localStorage.setItem('am_code_orders', JSON.stringify(orders));
+                await _supabase.from('orders').delete().eq('id', id);
                 renderQueueOrders();
             }
         }
