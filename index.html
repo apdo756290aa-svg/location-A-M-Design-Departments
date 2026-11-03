@@ -47,6 +47,62 @@
             z-index: 0; opacity: 0.12; pointer-events: none;
         }
 
+        /* Password Auth Modal Overlay */
+        .auth-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 9, 20, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid var(--neon-blue);
+            box-shadow: 0 0 30px var(--glow-blue);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .auth-card h2 {
+            color: var(--neon-blue);
+            font-weight: 800;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .auth-card p {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin-bottom: 20px;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-inner);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: #fff;
+            text-align: center;
+            font-size: 1.2rem;
+            letter-spacing: 4px;
+            outline: none;
+            margin-bottom: 15px;
+        }
+
+        .auth-input:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px var(--glow-blue);
+        }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -157,8 +213,8 @@
         }
         .btn-action-main:active { transform: scale(0.95); }
 
-        /* Order Cards & Account Cards */
-        .order-card, .account-card {
+        /* Order Cards & Account Cards & Portfolio Cards */
+        .order-card, .account-card, .portfolio-card {
             background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(10px);
             border: 1px solid var(--border-color);
@@ -231,14 +287,14 @@
         .btn-wa-a { background: rgba(0, 210, 255, 0.15); color: var(--neon-blue); border: 1px solid rgba(0, 210, 255, 0.3); }
         .btn-wa-m { background: rgba(255, 42, 95, 0.15); color: var(--bright-red); border: 1px solid rgba(255, 42, 95, 0.3); }
 
-        /* General Info Cards */
+   /* General Info Cards */
         .info-card {
             background: rgba(15, 23, 42, 0.85); border: 1px solid var(--border-color);
             border-radius: 16px; padding: 18px; margin-bottom: 15px;
         }
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; margin-bottom: 5px; font-size: 0.88rem; color: var(--text-muted); }
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%; padding: 10px; background: var(--bg-inner);
             border: 1px solid var(--border-color); border-radius: 8px; color: #fff; outline: none;
         }
@@ -266,6 +322,20 @@
 <body>
 
     <canvas id="binary-canvas"></canvas>
+
+    <!-- Password Modal -->
+    <div id="auth-modal" class="auth-overlay">
+        <div class="auth-card">
+            <div style="font-size: 2.5rem; color: var(--neon-blue); margin-bottom: 10px;">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <h2>لوحة إدارة A&M Code</h2>
+            <p>أدخل كود المرور للوصول إلى التحكم</p>
+            <input type="password" id="pass-code-input" class="auth-input" placeholder="••••" maxlength="8">
+            <button class="btn-action-main" style="width: 100%; padding: 12px; font-size: 1rem;" onclick="checkAdminPassword()">دخول اللوحة</button>
+            <p id="pass-error" style="color: var(--bright-red); font-size: 0.8rem; margin-top: 10px; display: none;">كود المرور غير صحيح!</p>
+        </div>
+    </div>
 
     <div class="container">
         <!-- Top Navbar -->
@@ -297,6 +367,7 @@
         <div class="pills-bar">
             <button class="pill-btn active" onclick="switchTab('orders-view', this)"><i class="fa-solid fa-receipt"></i> الفويسات والطلبات</button>
             <button class="pill-btn" onclick="switchTab('accounts-view', this)"><i class="fa-solid fa-user-plus"></i> الحسابات المضافة</button>
+            <button class="pill-btn" onclick="switchTab('portfolio-view', this)"><i class="fa-solid fa-briefcase"></i> إدارة أعمالنا</button>
             <button class="pill-btn" onclick="switchTab('blocked-view', this)"><i class="fa-solid fa-ban"></i> البلوك</button>
             <button class="pill-btn" onclick="switchTab('age-verify-view', this)"><i class="fa-solid fa-id-card"></i> التأكد من العمر</button>
             <button class="pill-btn" onclick="switchTab('services-view', this)"><i class="fa-solid fa-list-check"></i> الخدمات</button>
@@ -321,7 +392,39 @@
             <div id="accounts-container">جارٍ تحميل الحسابات...</div>
         </div>
 
-        <!-- VIEW 3: BLOCKED USERS -->
+        <!-- VIEW 3: PORTFOLIO MANAGEMENT -->
+        <div id="portfolio-view" class="tab-view">
+            <div class="section-bar">
+                <div class="section-title"><i class="fa-solid fa-briefcase" style="color:var(--accent-orange);"></i> إدارة قسم "أعمالنا" بالموقع</div>
+                <button class="btn-action-main" onclick="renderPortfolio()"><i class="fa-solid fa-rotate-right"></i> تحديث</button>
+            </div>
+            
+            <div class="info-card">
+                <h3>إضافة مشروع جديد لمعاينة الزبائن:</h3>
+                <br>
+                <div class="form-group">
+                    <label>عنوان المشروع:</label>
+                    <input type="text" id="port-title" placeholder="مثال: منيو مطعم البرجر الذهبي">
+                </div>
+                <div class="form-group">
+                    <label>وصف مختصر للمشروع:</label>
+                    <input type="text" id="port-desc" placeholder="مثال: نظام طلبات تفاعلي مباشر عبر الواتساب">
+                </div>
+                <div class="form-group">
+                    <label>رابط الموقع/المعاينة (Link):</label>
+                    <input type="text" id="port-link" placeholder="مثال: https://example.com">
+                </div>
+                <div class="form-group">
+                    <label>صورة الموقع (اختر ملف صورة من جهازك):</label>
+                    <input type="file" id="port-img-file" accept="image/*" style="padding: 5px;">
+                </div>
+                <button class="btn-action-main" style="width:100%;" onclick="addPortfolioProject()"><i class="fa-solid fa-plus"></i> إضافة قسم أعمالنا</button>
+            </div>
+
+            <div id="portfolio-list-container">جارٍ تحميل الأعمال...</div>
+        </div>
+
+        <!-- VIEW 4: BLOCKED USERS -->
         <div id="blocked-view" class="tab-view">
             <div class="section-bar">
                 <div class="section-title"><i class="fa-solid fa-ban" style="color:var(--bright-red);"></i> قائمة العملاء المحظورين (بلوك)</div>
@@ -331,7 +434,7 @@
             </div>
         </div>
 
-        <!-- VIEW 4: AGE VERIFICATION SYSTEM -->
+        <!-- VIEW 5: AGE VERIFICATION SYSTEM -->
         <div id="age-verify-view" class="tab-view">
             <div class="section-bar">
                 <div class="section-title"><i class="fa-solid fa-shield-check"></i> منظومة التأكد من العمر والأمان</div>
@@ -349,7 +452,7 @@
             </div>
         </div>
 
-        <!-- VIEW 5: SERVICES -->
+        <!-- VIEW 6: SERVICES -->
         <div id="services-view" class="tab-view">
             <div class="section-bar">
                 <div class="section-title"><i class="fa-solid fa-laptop-code"></i> إدارة قائمة الخدمات</div>
@@ -370,7 +473,7 @@
             <div id="services-list-box"></div>
         </div>
 
-        <!-- VIEW 6: SETTINGS -->
+        <!-- VIEW 7: SETTINGS -->
         <div id="settings-view" class="tab-view">
             <div class="section-bar">
                 <div class="section-title"><i class="fa-solid fa-sliders"></i> إعدادات الأرقام والتواصل</div>
@@ -400,6 +503,7 @@
         <ul class="drawer-nav-list">
             <li class="drawer-nav-item" onclick="switchTab('orders-view'); closeDrawer();">فويسات والطلبات</li>
             <li class="drawer-nav-item" onclick="switchTab('accounts-view'); closeDrawer();">الحسابات المضافة</li>
+            <li class="drawer-nav-item" onclick="switchTab('portfolio-view'); closeDrawer();">إدارة أعمالنا</li>
             <li class="drawer-nav-item" onclick="switchTab('blocked-view'); closeDrawer();">البلوك</li>
             <li class="drawer-nav-item" onclick="switchTab('age-verify-view'); closeDrawer();">منظومة التأكد من العمر</li>
             <li class="drawer-nav-item" onclick="switchTab('services-view'); closeDrawer();">إدارة الخدمات</li>
@@ -408,6 +512,22 @@
     </div>
 
     <script>
+        // Check Admin Password
+        function checkAdminPassword() {
+            const input = document.getElementById('pass-code-input').value;
+            const errorMsg = document.getElementById('pass-error');
+            if (input === '8372') {
+                document.getElementById('auth-modal').style.display = 'none';
+                renderQueueOrders();
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        document.getElementById('pass-code-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') checkAdminPassword();
+        });
+
         // Supabase Client Initialization
         const SUPABASE_URL = 'https://qmvnobnkzdqgasollkzv.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_AETlvXHTGMEtQPQCQOhEKQ_Bn7tJX0K';
@@ -469,6 +589,7 @@
 
             if (viewId === 'orders-view') renderQueueOrders();
             if (viewId === 'accounts-view') renderAddedAccounts();
+            if (viewId === 'portfolio-view') renderPortfolio();
             if (viewId === 'blocked-view') renderBlockedUsers();
             if (viewId === 'services-view') renderServices();
         }
@@ -484,7 +605,6 @@
                 .order('timestamp', { ascending: true });
 
             if (error) {
-                // Fallback to localStorage if table doesn't exist yet or connection issue
                 console.warn("Supabase fetch error, using local storage fallback", error);
                 orders = JSON.parse(localStorage.getItem('am_code_orders')) || [];
             }
@@ -516,7 +636,7 @@
                     <div class="client-header-flex">
                         <img src="${order.avatar || 'https://via.placeholder.com/50'}" class="client-avatar" alt="صورة العميل">
                         <div class="client-info">
-                            <strong>العميل:</strong> ${order.name || 'عميل'} <br>
+                                <strong>العميل:</strong> ${order.name || 'عميل'} <br>
                             <strong>الهاتف:</strong> ${order.phone}
                         </div>
                     </div>
@@ -582,6 +702,90 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        /* --- PORTFOLIO MANAGEMENT --- */
+        async function renderPortfolio() {
+            const container = document.getElementById('portfolio-list-container');
+            container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">جارٍ تحميل قسم أعمالنا من السحاب...</div>`;
+
+            let { data: items, error } = await _supabase.from('portfolio').select('*').order('created_at', { ascending: false });
+            
+            if (error) {
+                console.warn("Portfolio fetch error", error);
+                items = [];
+            }
+
+            container.innerHTML = '';
+            if (!items || items.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">لا توجد مشاريع مضافة في الأعمال حتى الآن</div>`;
+                return;
+            }
+
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'portfolio-card';
+                card.innerHTML = `
+                    <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+                        <img src="${item.img_url || 'https://via.placeholder.com/100'}" style="width:100px; height:70px; border-radius:8px; object-fit:cover; border:1px solid var(--neon-blue);" alt="صورة العمل">
+                        <div style="flex:1;">
+                            <h4 style="color:var(--neon-blue); font-size:1rem; margin-bottom:4px;">${item.title}</h4>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:6px;">${item.description || 'بدون وصف'}</p>
+                            ${item.link ? `<a href="${item.link}" target="_blank" style="color:var(--accent-green); font-size:0.8rem; text-decoration:none;"><i class="fa-solid fa-link"></i> ${item.link}</a>` : ''}
+                        </div>
+                        <button class="btn-card-action btn-delete" onclick="deletePortfolioProject('${item.id}')"><i class="fa-solid fa-trash"></i> حذف</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function addPortfolioProject() {
+            const title = document.getElementById('port-title').value.trim();
+            const description = document.getElementById('port-desc').value.trim();
+            const link = document.getElementById('port-link').value.trim();
+            const fileInput = document.getElementById('port-img-file');
+
+            if (!title) {
+                alert('يرجى كتابة عنوان المشروع على الأقل!');
+                return;
+            }
+
+            let img_url = '';
+
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    img_url = e.target.result; // Convert image file to base64 data
+                    await savePortfolioToSupabase(title, description, link, img_url);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                await savePortfolioToSupabase(title, description, link, img_url);
+            }
+        }
+
+        async function savePortfolioToSupabase(title, description, link, img_url) {
+            const { error } = await _supabase.from('portfolio').insert([{ title, description, link, img_url }]);
+            
+            if (error) {
+                alert('حدث خطأ في الإضافة: ' + error.message);
+            } else {
+                alert('تمت إضافة المشروع في قسم أعمالنا بنجاح!');
+                document.getElementById('port-title').value = '';
+                document.getElementById('port-desc').value = '';
+                document.getElementById('port-link').value = '';
+                document.getElementById('port-img-file').value = '';
+                renderPortfolio();
+            }
+        }
+
+        async function deletePortfolioProject(id) {
+            if (confirm('هل أنت متأكد من حذف هذا المشروع من قسم أعمالنا؟')) {
+                await _supabase.from('portfolio').delete().eq('id', id);
+                renderPortfolio();
+            }
         }
 
         async function deleteAccount(id) {
@@ -682,9 +886,6 @@
         document.getElementById('close-drawer-btn').onclick = closeDrawer;
         drawerOverlay.onclick = closeDrawer;
         function closeDrawer() { drawerMenu.classList.remove('active'); drawerOverlay.classList.remove('active'); }
-
-        // Initial Load
-        renderQueueOrders();
     </script>
 </body>
 </html>
