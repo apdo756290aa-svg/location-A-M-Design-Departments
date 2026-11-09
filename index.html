@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A&M Code | إدارة التحكم السحابية (Supabase)</title>
+    <title>A&M Code | لوحة التحكم السحابية الآمنة</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -47,13 +47,13 @@
             z-index: 0; opacity: 0.12; pointer-events: none;
         }
 
-        /* Password Auth Modal Overlay */
+        /* Supabase Auth Modal Overlay */
         .auth-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 9, 20, 0.95);
-            backdrop-filter: blur(15px);
-            z-index: 9999;
+            background: rgba(5, 9, 20, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 99999;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -61,9 +61,9 @@
         }
 
         .auth-card {
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(15, 23, 42, 0.98);
             border: 2px solid var(--neon-blue);
-            box-shadow: 0 0 30px var(--glow-blue);
+            box-shadow: 0 0 40px var(--glow-blue);
             border-radius: 20px;
             padding: 30px;
             max-width: 400px;
@@ -75,7 +75,7 @@
             color: var(--neon-blue);
             font-weight: 800;
             margin-bottom: 10px;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
         }
 
         .auth-card p {
@@ -91,9 +91,8 @@
             border: 1px solid var(--border-color);
             border-radius: 10px;
             color: #fff;
-            text-align: center;
-            font-size: 1.2rem;
-            letter-spacing: 4px;
+            text-align: right;
+            font-size: 1rem;
             outline: none;
             margin-bottom: 15px;
         }
@@ -143,15 +142,16 @@
         .brand-title { font-weight: 800; font-size: 1rem; color: var(--text-main); }
         .brand-sub { font-size: 0.75rem; color: var(--neon-blue); }
 
-        .btn-nav-icon {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            width: 38px; height: 38px; border-radius: 8px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        .btn-nav-icon, .btn-logout {
+            background: rgba(255, 42, 95, 0.15);
+            border: 1px solid var(--bright-red);
+            color: var(--bright-red);
+            padding: 8px 12px; border-radius: 8px;
+            cursor: pointer; font-weight: 700; font-size: 0.8rem;
+            display: flex; align-items: center; gap: 5px;
             transition: 0.3s;
         }
-        .btn-nav-icon:hover { border-color: var(--neon-blue); }
+        .btn-nav-icon { background: rgba(255, 255, 255, 0.05); border-color: var(--border-color); color: var(--text-main); width: 38px; height: 38px; justify-content: center; }
 
         /* Status Control Banner */
         .status-control-banner {
@@ -289,7 +289,6 @@
         .btn-wa-a { background: rgba(0, 210, 255, 0.15); color: var(--neon-blue); border: 1px solid rgba(0, 210, 255, 0.3); }
         .btn-wa-m { background: rgba(255, 42, 95, 0.15); color: var(--bright-red); border: 1px solid rgba(255, 42, 95, 0.3); }
 
-        /* General Info Cards */
         .info-card {
             background: rgba(15, 23, 42, 0.85); border: 1px solid var(--border-color);
             border-radius: 16px; padding: 18px; margin-bottom: 15px;
@@ -325,17 +324,18 @@
 
     <canvas id="binary-canvas"></canvas>
 
-    <!-- Password Modal -->
+    <!-- Supabase Auth Login Modal -->
     <div id="auth-modal" class="auth-overlay">
         <div class="auth-card">
             <div style="font-size: 2.5rem; color: var(--neon-blue); margin-bottom: 10px;">
                 <i class="fa-solid fa-user-shield"></i>
             </div>
-            <h2>لوحة إدارة A&M Code</h2>
-            <p>أدخل كود المرور للوصول إلى التحكم</p>
-            <input type="password" id="pass-code-input" class="auth-input" placeholder="••••" maxlength="8">
-            <button class="btn-action-main" style="width: 100%; padding: 12px; font-size: 1rem;" onclick="checkAdminPassword()">دخول اللوحة</button>
-            <p id="pass-error" style="color: var(--bright-red); font-size: 0.8rem; margin-top: 10px; display: none;">كود المرور غير صحيح!</p>
+            <h2>دخول الأدمن الآمن</h2>
+            <p>أدخل الإيميل وباسورد الأدمن المعتمدين فقط</p>
+            <input type="email" id="admin-email" class="auth-input" placeholder="admin@amcode.com">
+            <input type="password" id="admin-password" class="auth-input" placeholder="كلمة المرور">
+            <button class="btn-action-main" style="width: 100%; padding: 12px; font-size: 1rem;" onclick="loginAdmin()">تسجيل الدخول الآمن</button>
+            <p id="pass-error" style="color: var(--bright-red); font-size: 0.8rem; margin-top: 10px; display: none;">خطأ في البريد، كلمة المرور، أو الحساب ليس أدمن!</p>
         </div>
     </div>
 
@@ -345,18 +345,21 @@
             <div class="nav-brand">
                 <div class="brand-icon"><i class="fa-solid fa-sliders"></i></div>
                 <div>
-                    <div class="brand-title">إدارة A&M Code الفورية</div>
-                    <div class="brand-sub">مربوط بقاعدة بيانات Supabase 🚀</div>
+                    <div class="brand-title">إدارة A&M Code الفورية الآمنة</div>
+                    <div class="brand-sub">مربوط بـ Supabase Auth & Admins Table 🚀</div>
                 </div>
             </div>
-            <button class="btn-nav-icon" id="open-drawer-btn"><i class="fa-solid fa-bars"></i></button>
+            <div style="display:flex; gap:8px;">
+                <button class="btn-logout" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> خروج</button>
+                <button class="btn-nav-icon" id="open-drawer-btn"><i class="fa-solid fa-bars"></i></button>
+            </div>
         </div>
 
         <!-- Status Control Banner -->
         <div class="status-control-banner">
             <div>
                 <strong style="color:var(--neon-blue);"><i class="fa-solid fa-clock"></i> حالة استقبال الطلبات للزبائن:</strong>
-                <div style="font-size:0.8rem; color:var(--text-muted);">تعديل الحالة يظهر للزبون فوراً في صفحته</div>
+                <div style="font-size:0.80rem; color:var(--text-muted);">تعديل الحالة يتم حفظه سحابياً ويظهر للزبون فوراً</div>
             </div>
             <select id="global-system-status" class="status-select" onchange="updateGlobalStatus()">
                 <option value="open">🟢 الطلبات مفتوحة واستقبال عادي</option>
@@ -398,7 +401,7 @@
         <!-- VIEW 3: PORTFOLIO & VIDEOS MANAGEMENT -->
         <div id="portfolio-view" class="tab-view">
             <div class="section-bar">
-                <div class="section-title"><i class="fa-solid fa-briefcase" style="color:var(--accent-orange);"></i> إدارة قسم "أعمالنا" (صور وفيديوهات الموقع)</div>
+                <div class="section-title"><i class="fa-solid fa-briefcase" style="color:var(--accent-orange);"></i> إدارة قسم "أعمالنا" (صور وفيديوهات المعاينة)</div>
                 <button class="btn-action-main" onclick="renderPortfolio()"><i class="fa-solid fa-rotate-right"></i> تحديث</button>
             </div>
             
@@ -407,23 +410,19 @@
                 <br>
                 <div class="form-group">
                     <label>عنوان المشروع / الموقع:</label>
-                    <input type="text" id="port-title" placeholder="مثال: موقع مطعم أونلاين بريفيو فيديو">
+                    <input type="text" id="port-title" placeholder="مثال: منيو مطعم البرجر أو معاينة فيديو">
                 </div>
                 <div class="form-group">
                     <label>وصف مختصر للمشروع:</label>
-                    <input type="text" id="port-desc" placeholder="مثال: معاينة شكل الموقع ونظام الطلبات بالفيديو والتصميم">
+                    <input type="text" id="port-desc" placeholder="مثال: نظام طلبات تفاعلي مباشر">
                 </div>
                 <div class="form-group">
-                    <label>رابط الموقع/المعاينة (أو رابط فيديو يوتيوب/مباشر):</label>
-                    <input type="text" id="port-link" placeholder="مثال: https://example.com أو رابط فيديو">
+                    <label>رابط الموقع أو رابط الفيديو (يوتيوب / رابط مباشر):</label>
+                    <input type="text" id="port-link" placeholder="https://youtube.com/... أو رابط المعاينة">
                 </div>
                 <div class="form-group">
-                    <label>صورة الموقع أو غلاف الفيديو (من الملفات):</label>
+                    <label>صورة غلاف العمل (اختياري):</label>
                     <input type="file" id="port-img-file" accept="image/*" style="padding: 5px;">
-                </div>
-                <div class="form-group">
-                    <label>أو ملف فيديو شرح شكل الموقع (من الملفات):</label>
-                    <input type="file" id="port-video-file" accept="video/*" style="padding: 5px;">
                 </div>
                 <button class="btn-action-main" style="width:100%;" onclick="addPortfolioProject()"><i class="fa-solid fa-plus"></i> نشر في قسم أعمالنا</button>
             </div>
@@ -508,7 +507,7 @@
                 <div class="section-title"><i class="fa-solid fa-laptop-code"></i> إدارة قائمة الخدمات</div>
             </div>
             <div class="info-card">
-                <h3>إضافة خدمة برمجية جديدة:</h3>
+                <h3>إضافة خدمة برمجية جديدة (تُحفظ سحابياً):</h3>
                 <br>
                 <div class="form-group">
                     <label>اسم الخدمة:</label>
@@ -518,9 +517,9 @@
                     <label>السعر التقديري:</label>
                     <input type="text" id="new-service-price" placeholder="مثال: 1500 جنيه">
                 </div>
-                <button class="btn-action-main" style="width:100%;" onclick="addService()">إضافة للأنظمة</button>
+                <button class="btn-action-main" style="width:100%;" onclick="addService()">إضافة وتحديث سحابي</button>
             </div>
-            <div id="services-list-box"></div>
+            <div id="services-list-box">جارٍ تحميل الخدمات...</div>
         </div>
 
         <!-- VIEW 8: SETTINGS -->
@@ -563,40 +562,118 @@
     </div>
 
     <script>
-        // Check Admin Password
-        function checkAdminPassword() {
-            const input = document.getElementById('pass-code-input').value;
-            const errorMsg = document.getElementById('pass-error');
-            if (input === '8372') {
-                document.getElementById('auth-modal').style.display = 'none';
-                renderQueueOrders();
-                loadAccountsForNotifications();
-            } else {
-                errorMsg.style.display = 'block';
-            }
-        }
-
-        document.getElementById('pass-code-input').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') checkAdminPassword();
-        });
-
         // Supabase Client Initialization
         const SUPABASE_URL = 'https://qmvnobnkzdqgasollkzv.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_AETlvXHTGMEtQPQCQOhEKQ_Bn7tJX0K';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // Security Check: Verify if email exists in `admins` table
+        async function verifyAdminAndProceed(email) {
+            let { data: adminCheck, error } = await _supabase
+                .from('admins')
+                .select('*')
+                .eq('email', email)
+                .single();
+
+            if (error || !adminCheck) {
+                // Not an admin! Force sign out and block access
+                await _supabase.auth.signOut();
+                document.getElementById('auth-modal').style.display = 'flex';
+                const err = document.getElementById('pass-error');
+                err.innerText = "⛔ عذراً، هذا الحساب ليس مسجلاً كأدمن في النظام!";
+                err.style.display = 'block';
+                return false;
+            }
+            return true;
+        }
+
+        // Forced Check Session on Load
+        async function checkInitialAuth() {
+            const { data: { session } } = await _supabase.auth.getSession();
+            const authModal = document.getElementById('auth-modal');
+            if (session && session.user) {
+                const isAdmin = await verifyAdminAndProceed(session.user.email);
+                if (isAdmin) {
+                    authModal.style.display = 'none';
+                    loadSystemSettings();
+                    renderQueueOrders();
+                    loadAccountsForNotifications();
+                    renderServices();
+                }
+            } else {
+                authModal.style.display = 'flex';
+            }
+        }
+        checkInitialAuth();
+
+        // Login using Supabase Auth + Admin Table Verification
+        async function loginAdmin() {
+            const email = document.getElementById('admin-email').value.trim();
+            const password = document.getElementById('admin-password').value.trim();
+            const errorMsg = document.getElementById('pass-error');
+
+            if(!email || !password) {
+                errorMsg.innerText = "يرجى إدخال البريد وكلمة المرور!";
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+
+            if (error || !data.session) {
+                errorMsg.innerText = "خطأ في البريد أو كلمة المرور!";
+                errorMsg.style.display = 'block';
+            } else {
+                // Verify admin table authorization
+                const isAdmin = await verifyAdminAndProceed(email);
+                if (isAdmin) {
+                    document.getElementById('auth-modal').style.display = 'none';
+                    loadSystemSettings();
+                    renderQueueOrders();
+                    loadAccountsForNotifications();
+                    renderServices();
+                }
+            }
+        }
+
+        // Logout Function
+        async function logoutAdmin() {
+            await _supabase.auth.signOut();
+            location.reload();
+        }
+
+        document.getElementById('admin-password').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') loginAdmin();
+        });
+
         let phone1 = localStorage.getItem('p1') || "201148041323";
         let phone2 = localStorage.getItem('p2') || "201279364446";
 
-        document.getElementById('global-system-status').value = localStorage.getItem('am_system_status') || 'open';
-
-        function updateGlobalStatus() {
-            const val = document.getElementById('global-system-status').value;
-            localStorage.setItem('am_system_status', val);
-            alert('تم تحديث حالة استقبال الطلبات للزبائن بنجاح!');
+        async function loadSystemSettings() {
+            let { data } = await _supabase.from('settings').select('*').eq('key', 'system_status').single();
+            if(data && data.value) {
+                document.getElementById('global-system-status').value = data.value;
+            }
+            
+            let { data: ageData } = await _supabase.from('settings').select('*').eq('key', 'age_mode').single();
+            if(ageData && ageData.value) {
+                document.getElementById('age-limit-status').value = ageData.value;
+            }
         }
 
-        // Canvas Effect
+        async function updateGlobalStatus() {
+            const val = document.getElementById('global-system-status').value;
+            await _supabase.from('settings').upsert({ key: 'system_status', value: val });
+            alert('✅ تم تحديث حالة استقبال الطلبات سحابياً!');
+        }
+
+        async function saveAgeSetting() {
+            const val = document.getElementById('age-limit-status').value;
+            await _supabase.from('settings').upsert({ key: 'age_mode', value: val });
+            alert('✅ تم تحديث إعدادات سن العملاء سحابياً!');
+        }
+
+        // Canvas Background Effect
         const canvas = document.getElementById('binary-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -624,11 +701,6 @@
         }
         setInterval(drawBinary, 33);
 
-        let services = [
-            { name: "مواقع المطاعم والمنيو", price: "800 جنيه" },
-            { name: "تطبيقات ومنصات ويب", price: "2000 جنيه" }
-        ];
-
         // Switch View Tab Function
         function switchTab(viewId, btn = null) {
             document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
@@ -647,7 +719,12 @@
             if (viewId === 'services-view') renderServices();
         }
 
-        // Fetch Orders from Supabase (FIFO Ordered)
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // Fetch Orders from Supabase with safe event listener for WhatsApp
         async function renderQueueOrders() {
             const container = document.getElementById('queue-container');
             container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">جارٍ الجلب من السحاب...</div>`;
@@ -657,8 +734,7 @@
                 .select('*')
                 .order('timestamp', { ascending: true });
 
-            if (error) {
-                console.warn("Supabase fetch error, using local storage fallback", error);
+            if (error || !orders) {
                 orders = JSON.parse(localStorage.getItem('am_code_orders')) || [];
             }
 
@@ -679,57 +755,74 @@
                 if (order.status === 'مرفوض') statusBadgeClass = 'status-rejected';
                 if (order.status === 'محظور') statusBadgeClass = 'status-blocked';
 
+                const safeName = escapeHtml(order.name || 'عميل');
+                const safeDesc = escapeHtml(order.desc || 'لا يوجد وصف نصي');
+                const safePhone = escapeHtml(order.phone);
+                const safeId = escapeHtml(order.id);
+
                 card.innerHTML = `
                     <div class="card-top">
                         <div class="queue-badge ${queueNumber === 1 ? 'priority-1' : ''}">
                             ${queueNumber === 1 ? '🔴 الأول بالدور (#1)' : 'الدور رقم #' + queueNumber}
                         </div>
-                        <div class="status-badge ${statusBadgeClass}">${order.status || 'جديد'}</div>
+                        <div class="status-badge ${statusBadgeClass}">${escapeHtml(order.status || 'جديد')}</div>
                     </div>
                     
                     <div class="client-header-flex">
-                        <img src="${order.avatar || 'https://via.placeholder.com/50'}" class="client-avatar" alt="صورة العميل">
+                        <img src="${escapeHtml(order.avatar || 'https://via.placeholder.com/50')}" class="client-avatar" alt="صورة العميل">
                         <div class="client-info">
-                            <strong>العميل:</strong> ${order.name || 'عميل'} <br>
-                            <strong>الهاتف:</strong> ${order.phone}
+                            <strong>العميل:</strong> ${safeName} <br>
+                            <strong>الهاتف:</strong> ${safePhone}
                         </div>
                     </div>
 
                     <div class="order-details-box">
-                        <strong>وصف الطلب:</strong> ${order.desc || 'لا يوجد وصف نصي'}
+                        <strong>وصف الطلب:</strong> ${safeDesc}
                     </div>
 
                     <div class="attachments-box">
-                        <div class="attachments-title"><i class="fa-solid fa-paperclip"></i> مرفقات الزبون (فويس وصورة):</div>
-                        ${order.audioUrl ? `<audio controls class="audio-player"><source src="${order.audioUrl}" type="audio/webm">متصفحك لا يدعم المشغل الصوتي</audio>` : '<div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:6px;">⚪ لم يتم إرفاق فويس.</div>'}
-                        ${order.imgUrl ? `<img src="${order.imgUrl}" class="attached-img" onclick="window.open(this.src)" alt="صورة الطلب">` : '<div style="font-size:0.78rem; color:var(--text-muted);">⚪ لم يتم إرفاق صورة.</div>'}
+                        <div class="attachments-title"><i class="fa-solid fa-paperclip"></i> مرفقات الزبون:</div>
+                        ${order.audioUrl ? `<audio controls class="audio-player"><source src="${escapeHtml(order.audioUrl)}" type="audio/webm"></audio>` : '<div style="font-size:0.78rem; color:var(--text-muted);">⚪ لا يوجد فويس.</div>'}
+                        ${order.imgUrl ? `<img src="${escapeHtml(order.imgUrl)}" class="attached-img" onclick="window.open(this.src)">` : '<div style="font-size:0.78rem; color:var(--text-muted);">⚪ لا توجد صورة.</div>'}
                     </div>
 
                     <div class="card-bottom">
                         <div class="action-btns-group">
-                            <button class="btn-card-action btn-working" onclick="updateOrderStatus('${order.id}', 'نعمل عليه')"><i class="fa-solid fa-spinner"></i> نعمل عليه</button>
-                            <button class="btn-card-action btn-accept" onclick="updateOrderStatus('${order.id}', 'تم الإنجاز')"><i class="fa-solid fa-check"></i> تم الإنجاز</button>
-                            <button class="btn-card-action btn-reject" onclick="updateOrderStatus('${order.id}', 'مرفوض')"><i class="fa-solid fa-xmark"></i> رفض</button>
-                            <button class="btn-card-action btn-block" onclick="blockUser('${order.phone}', '${order.id}')"><i class="fa-solid fa-ban"></i> بلوك</button>
-                            <button class="btn-card-action btn-delete" onclick="deleteOrder('${order.id}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                            <button class="btn-card-action btn-working" onclick="updateOrderStatus('${safeId}', 'نعمل عليه')"><i class="fa-solid fa-spinner"></i> نعمل عليه</button>
+                            <button class="btn-card-action btn-accept" onclick="updateOrderStatus('${safeId}', 'تم الإنجاز')"><i class="fa-solid fa-check"></i> تم الإنجاز</button>
+                            <button class="btn-card-action btn-reject" onclick="updateOrderStatus('${safeId}', 'مرفوض')"><i class="fa-solid fa-xmark"></i> رفض</button>
+                            <button class="btn-card-action btn-block" onclick="blockUser('${safePhone}', '${safeId}')"><i class="fa-solid fa-ban"></i> بلوك</button>
+                            <button class="btn-card-action btn-delete" onclick="deleteOrder('${safeId}')"><i class="fa-solid fa-trash"></i></button>
                         </div>
                         <div class="action-btns-group">
-                            <button class="btn-card-action btn-wa-a" onclick="shareWhatsApp('${phone1}', ${queueNumber}, '${order.name}', '${order.desc}')"><i class="fa-brands fa-whatsapp"></i> عبدو</button>
-                            <button class="btn-card-action btn-wa-m" onclick="shareWhatsApp('${phone2}', ${queueNumber}, '${order.name}', '${order.desc}')"><i class="fa-brands fa-whatsapp"></i> محمود</button>
+                            <button class="btn-card-action btn-wa-a wa-btn-action" data-phone="${phone1}" data-q="${queueNumber}" data-name="${order.name || 'عميل'}" data-desc="${order.desc || 'بدون وصف'}"><i class="fa-brands fa-whatsapp"></i> عبدو</button>
+                            <button class="btn-card-action btn-wa-m wa-btn-action" data-phone="${phone2}" data-q="${queueNumber}" data-name="${order.name || 'عميل'}" data-desc="${order.desc || 'بدون وصف'}"><i class="fa-brands fa-whatsapp"></i> محمود</button>
                         </div>
                     </div>
                 `;
                 container.appendChild(card);
             });
+
+            // Secure WhatsApp Event Listeners to prevent quote breaking
+            document.querySelectorAll('.wa-btn-action').forEach(btn => {
+                btn.onclick = function() {
+                    const phone = this.getAttribute('data-phone');
+                    const qNum = this.getAttribute('data-q');
+                    const cName = this.getAttribute('data-name');
+                    const cDesc = this.getAttribute('data-desc');
+                    let msg = `📌 طلب بالدور رقم (#${qNum}):\n👤 العميل: ${cName}\n📝 التفاصيل: ${cDesc}`;
+                    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+                };
+            });
         }
 
-        // Render Added Accounts from Supabase
+        // Render Added Accounts
         async function renderAddedAccounts() {
             const container = document.getElementById('accounts-container');
             container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">جارٍ تحميل الحسابات...</div>`;
             
             let { data: accounts, error } = await _supabase.from('accounts').select('*');
-            if (error) {
+            if (error || !accounts) {
                 accounts = JSON.parse(localStorage.getItem('am_registered_accounts')) || [];
             }
 
@@ -744,16 +837,16 @@
                 card.className = 'account-card';
                 card.innerHTML = `
                     <div class="client-header-flex">
-                        <img src="${acc.avatar || 'https://via.placeholder.com/50'}" class="client-avatar" alt="صورة الحساب">
+                        <img src="${escapeHtml(acc.avatar || 'https://via.placeholder.com/50')}" class="client-avatar" alt="صورة الحساب">
                         <div class="client-info">
-                            <strong>اسم الحساب:</strong> ${acc.name || 'بدون اسم'} <br>
-                            <strong>رقم الهاتف:</strong> ${acc.phone} <br>
-                            <strong>العمر:</strong> ${acc.age || 'غير محدد'} | <strong>تاريخ التسجيل:</strong> ${acc.regDate || 'حديث'}
+                            <strong>اسم الحساب:</strong> ${escapeHtml(acc.name || 'بدون اسم')} <br>
+                            <strong>رقم الهاتف:</strong> ${escapeHtml(acc.phone)} <br>
+                            <strong>العمر:</strong> ${escapeHtml(acc.age || 'غير محدد')} | <strong>التسجيل:</strong> ${escapeHtml(acc.regDate || 'حديث')}
                         </div>
                     </div>
                     <div style="display:flex; justify-content:flex-end; gap:6px; border-top:1px solid var(--border-color); padding-top:10px;">
-                        <button class="btn-card-action btn-wa-a" onclick="sendDirectNotificationToAccount('${acc.phone}', '${acc.name}')"><i class="fa-solid fa-bell"></i> إرسال إشعار خاص</button>
-                        <button class="btn-card-action btn-delete" onclick="deleteAccount('${acc.id}')"><i class="fa-solid fa-trash"></i> حذف الحساب</button>
+                        <button class="btn-card-action btn-wa-a" onclick="sendDirectNotificationToAccount('${escapeHtml(acc.phone)}')"><i class="fa-solid fa-bell"></i> إشعار خاص</button>
+                        <button class="btn-card-action btn-delete" onclick="deleteAccount('${escapeHtml(acc.id)}')"><i class="fa-solid fa-trash"></i> حذف</button>
                     </div>
                 `;
                 container.appendChild(card);
@@ -763,17 +856,17 @@
         /* --- PORTFOLIO & VIDEOS MANAGEMENT --- */
         async function renderPortfolio() {
             const container = document.getElementById('portfolio-list-container');
-            container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">جارٍ تحميل قسم أعمالنا من السحاب...</div>`;
+            container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">جارٍ التحميل من السحاب...</div>`;
 
             let { data: items, error } = await _supabase.from('portfolio').select('*').order('created_at', { ascending: false });
             
-            if (error) {
+            if (error || !items) {
                 items = JSON.parse(localStorage.getItem('am_portfolio')) || [];
             }
 
             container.innerHTML = '';
             if (!items || items.length === 0) {
-                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">لا توجد مشاريع مضافة في الأعمال حتى الآن</div>`;
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">لا توجد مشاريع في أعمالنا</div>`;
                 return;
             }
 
@@ -782,13 +875,13 @@
                 card.className = 'portfolio-card';
                 card.innerHTML = `
                     <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
-                        ${item.video_url ? `<video controls style="width:120px; height:80px; border-radius:8px; border:1px solid var(--neon-blue);"><source src="${item.video_url}"></video>` : `<img src="${item.img_url || 'https://via.placeholder.com/100'}" style="width:100px; height:70px; border-radius:8px; object-fit:cover; border:1px solid var(--neon-blue);" alt="صورة العمل">`}
+                        <img src="${escapeHtml(item.img_url || 'https://via.placeholder.com/100')}" style="width:100px; height:70px; border-radius:8px; object-fit:cover; border:1px solid var(--neon-blue);" alt="صورة العمل">
                         <div style="flex:1;">
-                            <h4 style="color:var(--neon-blue); font-size:1rem; margin-bottom:4px;">${item.title}</h4>
-                            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:6px;">${item.description || 'بدون وصف'}</p>
-                            ${item.link ? `<a href="${item.link}" target="_blank" style="color:var(--accent-green); font-size:0.8rem; text-decoration:none;"><i class="fa-solid fa-link"></i> ${item.link}</a>` : ''}
+                            <h4 style="color:var(--neon-blue); font-size:1rem; margin-bottom:4px;">${escapeHtml(item.title)}</h4>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:6px;">${escapeHtml(item.description || item.desc || '')}</p>
+                            ${item.link ? `<a href="${escapeHtml(item.link)}" target="_blank" style="color:var(--accent-green); font-size:0.8rem; text-decoration:none;"><i class="fa-solid fa-link"></i> ${escapeHtml(item.link)}</a>` : ''}
                         </div>
-                        <button class="btn-card-action btn-delete" onclick="deletePortfolioProject('${item.id}')"><i class="fa-solid fa-trash"></i> حذف</button>
+                        <button class="btn-card-action btn-delete" onclick="deletePortfolioProject('${escapeHtml(item.id)}')"><i class="fa-solid fa-trash"></i> حذف</button>
                     </div>
                 `;
                 container.appendChild(card);
@@ -799,8 +892,7 @@
             const title = document.getElementById('port-title').value.trim();
             const description = document.getElementById('port-desc').value.trim();
             const link = document.getElementById('port-link').value.trim();
-            const imgFileInput = document.getElementById('port-img-file');
-            const videoFileInput = document.getElementById('port-video-file');
+            const fileInput = document.getElementById('port-img-file');
 
             if (!title) {
                 alert('يرجى كتابة عنوان المشروع على الأقل!');
@@ -808,86 +900,50 @@
             }
 
             let img_url = '';
-            let video_url = '';
-
-            if (videoFileInput.files && videoFileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = async function(e) {
-                    video_url = e.target.result;
-                    await savePortfolioToSupabase(title, description, link, img_url, video_url);
-                };
-                reader.readAsDataURL(videoFileInput.files[0]);
-            } else if (imgFileInput.files && imgFileInput.files[0]) {
+            if (fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = async function(e) {
                     img_url = e.target.result;
-                    await savePortfolioToSupabase(title, description, link, img_url, video_url);
+                    await savePortfolioToSupabase(title, description, link, img_url);
                 };
-                reader.readAsDataURL(imgFileInput.files[0]);
+                reader.readAsDataURL(fileInput.files[0]);
             } else {
-                await savePortfolioToSupabase(title, description, link, img_url, video_url);
+                await savePortfolioToSupabase(title, description, link, img_url);
             }
         }
 
-        async function savePortfolioToSupabase(title, description, link, img_url, video_url) {
-            const newItem = { id: Date.now().toString(), title, description, link, img_url, video_url, created_at: new Date().toISOString() };
-            
+        async function savePortfolioToSupabase(title, description, link, img_url) {
+            const newItem = { id: Date.now().toString(), title, description, link, img_url, created_at: new Date().toISOString() };
             const { error } = await _supabase.from('portfolio').insert([newItem]);
-            
-            if (error) {
-                let localItems = JSON.parse(localStorage.getItem('am_portfolio')) || [];
-                localItems.unshift(newItem);
-                localStorage.setItem('am_portfolio', JSON.stringify(localItems));
-            }
-            
-            alert('تمت إضافة الموقع / الفيديو بنجاح في قسم أعمالنا!');
+            alert('✅ تمت إضافة المشروع في قسم أعمالنا بنجاح!');
             document.getElementById('port-title').value = '';
             document.getElementById('port-desc').value = '';
             document.getElementById('port-link').value = '';
             document.getElementById('port-img-file').value = '';
-            document.getElementById('port-video-file').value = '';
             renderPortfolio();
         }
 
         async function deletePortfolioProject(id) {
             if (confirm('هل أنت متأكد من حذف هذا العمل؟')) {
                 await _supabase.from('portfolio').delete().eq('id', id);
-                let localItems = JSON.parse(localStorage.getItem('am_portfolio')) || [];
-                localItems = localItems.filter(i => i.id !== id);
-                localStorage.setItem('am_portfolio', JSON.stringify(localItems));
                 renderPortfolio();
             }
         }
 
-        /* --- NOTIFICATIONS MANAGEMENT (FIXED ERROR) --- */
+        /* --- NOTIFICATIONS & SERVICES MANAGEMENT --- */
         function toggleAccountSelection() {
             const type = document.getElementById('notif-target-type').value;
-            const group = document.getElementById('account-select-group');
-            group.style.display = (type === 'single') ? 'block' : 'none';
+            document.getElementById('account-select-group').style.display = (type === 'single') ? 'block' : 'none';
         }
 
         async function loadAccountsForNotifications() {
             const select = document.getElementById('notif-target-account');
-            let { data: accounts, error } = await _supabase.from('accounts').select('*');
-
-            if (error || !accounts || accounts.length === 0) {
-                accounts = JSON.parse(localStorage.getItem('am_registered_accounts')) || [];
-            }
-
+            let { data: accounts } = await _supabase.from('accounts').select('*');
             if (!accounts || accounts.length === 0) {
-                select.innerHTML = `<option value="">لا توجد حسابات مضافة حالياً</option>`;
+                select.innerHTML = `<option value="">لا توجد حسابات مضافة</option>`;
                 return;
             }
-
-            select.innerHTML = accounts.map(acc => `<option value="${acc.phone}">${acc.name || 'بدون اسم'} (${acc.phone})</option>`).join('');
-        }
-
-        function sendDirectNotificationToAccount(phone, name) {
-            switchTab('notifications-view');
-            document.getElementById('notif-target-type').value = 'single';
-            toggleAccountSelection();
-            document.getElementById('notif-target-account').value = phone;
-            document.getElementById('notif-title').focus();
+            select.innerHTML = accounts.map(acc => `<option value="${escapeHtml(acc.phone)}">${escapeHtml(acc.name || 'بدون اسم')} (${escapeHtml(acc.phone)})</option>`).join('');
         }
 
         async function sendNotification() {
@@ -897,7 +953,7 @@
             const body = document.getElementById('notif-body').value.trim();
 
             if (!title || !body) {
-                alert('يرجى كتابة عنوان الإشعار ونصه بالكامل!');
+                alert('يرجى كتابة عنوان الإشعار ونصه!');
                 return;
             }
 
@@ -909,16 +965,8 @@
                 sent_at: new Date().toLocaleString('ar-EG')
             };
 
-            // إرسال وقبول فوري مع الحفظ الآمن لمنع ظهور شاشات الخطأ
-            try {
-                await _supabase.from('notifications').insert([notifObj]);
-            } catch(e) {}
-
-            let localNotifs = JSON.parse(localStorage.getItem('am_notifications')) || [];
-            localNotifs.unshift(notifObj);
-            localStorage.setItem('am_notifications', JSON.stringify(localNotifs));
-
-            alert('✅ تم إرسال الإشعار بنجاح إلى ' + (targetType === 'single' ? `الحساب (${targetPhone})` : 'جميع الحسابات!'));
+            await _supabase.from('notifications').insert([notifObj]);
+            alert('✅ تم إرسال الإشعار بنجاح!');
             document.getElementById('notif-title').value = '';
             document.getElementById('notif-body').value = '';
             renderNotificationsHistory();
@@ -926,43 +974,66 @@
 
         async function renderNotificationsHistory() {
             const container = document.getElementById('notifications-history-container');
-            container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">جارٍ تحميل سجل الإشعارات...</div>`;
-
-            let notifs = [];
-            let { data, error } = await _supabase.from('notifications').select('*').order('created_at', { ascending: false });
-
-            if (!error && data && data.length > 0) {
-                notifs = data;
-            } else {
-                notifs = JSON.parse(localStorage.getItem('am_notifications')) || [];
-            }
-
-            container.innerHTML = '';
+            let { data: notifs } = await _supabase.from('notifications').select('*').order('created_at', { ascending: false });
+            
             if (!notifs || notifs.length === 0) {
-                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">لا توجد إشعارات مرسلة بعد</div>`;
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">لا توجد إشعارات مرسلة</div>`;
+                return;
+            }
+            container.innerHTML = notifs.map(n => `
+                <div class="info-card">
+                    <strong style="color:var(--neon-blue);">📢 ${escapeHtml(n.title)}</strong>
+                    <p style="font-size:0.85rem; margin:5px 0;">${escapeHtml(n.body)}</p>
+                    <div style="font-size:0.75rem; color:var(--accent-orange);">المستهدف: ${escapeHtml(n.target_phone)}</div>
+                </div>
+            `).join('');
+        }
+
+        // Render Services from Supabase Table (No more data loss on refresh!)
+        async function renderServices() {
+            const box = document.getElementById('services-list-box');
+            box.innerHTML = `<div style="text-align:center; color:var(--text-muted);">جارٍ تحميل الخدمات...</div>`;
+            
+            let { data: services, error } = await _supabase.from('services').select('*');
+            if (error || !services || services.length === 0) {
+                box.innerHTML = `<div style="color:var(--text-muted); text-align:center;">لا توجد خدمات مضافة سحابياً حالياً.</div>`;
                 return;
             }
 
-            notifs.forEach(n => {
-                const card = document.createElement('div');
-                card.className = 'info-card';
-                card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <strong style="color:var(--neon-blue); font-size:0.95rem;">📢 ${n.title}</strong>
-                        <span style="font-size:0.75rem; color:var(--text-muted);">${n.sent_at || ''}</span>
+            box.innerHTML = services.map(s => `
+                <div class="info-card" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div><strong>${escapeHtml(s.name)}</strong></div>
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <span style="color:var(--neon-blue); font-weight:800;">${escapeHtml(s.price)}</span>
+                        <button class="btn-card-action btn-delete" onclick="deleteService('${escapeHtml(s.id)}')"><i class="fa-solid fa-trash"></i></button>
                     </div>
-                    <p style="font-size:0.85rem; color:var(--text-main); margin-bottom:6px;">${n.body}</p>
-                    <div style="font-size:0.78rem; color:var(--accent-orange);">المستهدف: <strong>${n.target_phone}</strong></div>
-                `;
-                container.appendChild(card);
-            });
+                </div>
+            `).join('');
+        }
+
+        async function addService() {
+            const name = document.getElementById('new-service-name').value.trim();
+            const price = document.getElementById('new-service-price').value.trim();
+            if (name && price) {
+                await _supabase.from('services').insert([{ name, price }]);
+                renderServices();
+                document.getElementById('new-service-name').value = '';
+                document.getElementById('new-service-price').value = '';
+                alert('✅ تمت إضافة الخدمة وحفظها سحابياً بنجاح!');
+            }
+        }
+
+        async function deleteService(id) {
+            if(confirm('حذف هذه الخدمة؟')) {
+                await _supabase.from('services').delete().eq('id', id);
+                renderServices();
+            }
         }
 
         async function deleteAccount(id) {
-            if (confirm('هل أنت متأكد من حذف هذا الحساب المسجل؟')) {
+            if (confirm('حذف هذا الحساب؟')) {
                 await _supabase.from('accounts').delete().eq('id', id);
                 renderAddedAccounts();
-                loadAccountsForNotifications();
             }
         }
 
@@ -972,67 +1043,17 @@
         }
 
         async function blockUser(phone, orderId) {
-            if (confirm(`هل أنت متأكد من حظر الرقم (${phone}) وإضافته لقائمة البلوك؟`)) {
+            if (confirm(`حظر الرقم (${phone})؟`)) {
                 await _supabase.from('blocked_users').insert([{ phone }]);
                 await updateOrderStatus(orderId, 'محظور');
-                alert('تم حظر الرقم بنجاح!');
                 renderQueueOrders();
             }
-        }
-
-        async function renderBlockedUsers() {
-            const box = document.getElementById('blocked-list-box');
-            let { data: blockedList } = await _supabase.from('blocked_users').select('*');
-            
-            if (!blockedList || blockedList.length === 0) {
-                box.innerHTML = `<p style="color:var(--text-muted); font-size:0.88rem;">لا توجد أرقام محظورة حالياً.</p>`;
-                return;
-            }
-            box.innerHTML = blockedList.map(item => `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color);">
-                    <span>🚫 رقم محظور: <strong>${item.phone}</strong></span>
-                    <button class="btn-card-action btn-accept" onclick="unblockUser('${item.id}')">إلغاء الحظر</button>
-                </div>
-            `).join('');
-        }
-
-        async function unblockUser(id) {
-            await _supabase.from('blocked_users').delete().eq('id', id);
-            renderBlockedUsers();
-            alert('تم إلغاء الحظر عن الرقم.');
         }
 
         async function deleteOrder(id) {
-            if (confirm('حذف هذا الطلب نهائياً؟')) {
+            if (confirm('حذف الطلب نهائياً؟')) {
                 await _supabase.from('orders').delete().eq('id', id);
                 renderQueueOrders();
-            }
-        }
-
-        function shareWhatsApp(phone, queueNum, clientName, desc) {
-            let msg = `📌 طلب بالدور رقم (#${queueNum}):\n👤 العميل: ${clientName || 'غير مسجل'}\n📝 التفاصيل: ${desc || 'بدون وصف'}`;
-            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        function renderServices() {
-            const box = document.getElementById('services-list-box');
-            box.innerHTML = services.map(s => `
-                <div class="info-card" style="display:flex; justify-content:space-between; align-items:center;">
-                    <div><strong>${s.name}</strong></div>
-                    <div style="color:var(--neon-blue); font-weight:800;">${s.price}</div>
-                </div>
-            `).join('');
-        }
-
-        function addService() {
-            const name = document.getElementById('new-service-name').value.trim();
-            const price = document.getElementById('new-service-price').value.trim();
-            if (name && price) {
-                services.push({ name, price });
-                renderServices();
-                document.getElementById('new-service-name').value = '';
-                document.getElementById('new-service-price').value = '';
-                alert('تمت إضافة الخدمة بنجاح!');
             }
         }
 
@@ -1042,12 +1063,6 @@
             localStorage.setItem('p1', phone1);
             localStorage.setItem('p2', phone2);
             alert('تم حفظ الأرقام بنجاح!');
-        }
-
-        function saveAgeSetting() {
-            const val = document.getElementById('age-limit-status').value;
-            localStorage.setItem('age_system_mode', val);
-            alert('تم تحديث إعدادات سن العملاء بنجاح!');
         }
 
         // Drawer Menu Actions
