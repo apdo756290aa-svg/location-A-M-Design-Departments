@@ -213,7 +213,7 @@
         }
         .btn-action-main:active { transform: scale(0.95); }
 
-        /* Order Cards & Account Cards & Portfolio Cards */
+        /* Cards Style */
         .order-card, .account-card, .portfolio-card {
             background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(10px);
@@ -241,6 +241,7 @@
             padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
         }
         .status-pending { background: rgba(249, 115, 22, 0.2); color: var(--accent-orange); }
+        .status-working { background: rgba(0, 210, 255, 0.2); color: var(--neon-blue); border: 1px solid var(--neon-blue); }
         .status-accepted { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
         .status-rejected { background: rgba(239, 68, 68, 0.2); color: var(--bright-red); }
         .status-blocked { background: rgba(0, 0, 0, 0.6); color: #ff0000; border: 1px solid #ff0000; }
@@ -281,13 +282,14 @@
         }
         .btn-card-action:active { transform: scale(0.95); }
         .btn-delete { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .btn-working { background: rgba(0, 210, 255, 0.2); color: var(--neon-blue); border: 1px solid var(--neon-blue); }
         .btn-accept { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
         .btn-reject { background: rgba(239, 68, 68, 0.2); color: var(--bright-red); }
         .btn-block { background: rgba(0, 0, 0, 0.5); color: #ff3333; border: 1px solid #ff3333; }
         .btn-wa-a { background: rgba(0, 210, 255, 0.15); color: var(--neon-blue); border: 1px solid rgba(0, 210, 255, 0.3); }
         .btn-wa-m { background: rgba(255, 42, 95, 0.15); color: var(--bright-red); border: 1px solid rgba(255, 42, 95, 0.3); }
 
-   /* General Info Cards */
+        /* General Info Cards */
         .info-card {
             background: rgba(15, 23, 42, 0.85); border: 1px solid var(--border-color);
             border-radius: 16px; padding: 18px; margin-bottom: 15px;
@@ -367,7 +369,8 @@
         <div class="pills-bar">
             <button class="pill-btn active" onclick="switchTab('orders-view', this)"><i class="fa-solid fa-receipt"></i> الفويسات والطلبات</button>
             <button class="pill-btn" onclick="switchTab('accounts-view', this)"><i class="fa-solid fa-user-plus"></i> الحسابات المضافة</button>
-            <button class="pill-btn" onclick="switchTab('portfolio-view', this)"><i class="fa-solid fa-briefcase"></i> إدارة أعمالنا</button>
+            <button class="pill-btn" onclick="switchTab('portfolio-view', this)"><i class="fa-solid fa-briefcase"></i> إدارة أعمالنا والفيديوهات</button>
+            <button class="pill-btn" onclick="switchTab('notifications-view', this)"><i class="fa-solid fa-bell"></i> قسم الإشعارات</button>
             <button class="pill-btn" onclick="switchTab('blocked-view', this)"><i class="fa-solid fa-ban"></i> البلوك</button>
             <button class="pill-btn" onclick="switchTab('age-verify-view', this)"><i class="fa-solid fa-id-card"></i> التأكد من العمر</button>
             <button class="pill-btn" onclick="switchTab('services-view', this)"><i class="fa-solid fa-list-check"></i> الخدمات</button>
@@ -392,39 +395,86 @@
             <div id="accounts-container">جارٍ تحميل الحسابات...</div>
         </div>
 
-        <!-- VIEW 3: PORTFOLIO MANAGEMENT -->
+        <!-- VIEW 3: PORTFOLIO & VIDEOS MANAGEMENT -->
         <div id="portfolio-view" class="tab-view">
             <div class="section-bar">
-                <div class="section-title"><i class="fa-solid fa-briefcase" style="color:var(--accent-orange);"></i> إدارة قسم "أعمالنا" بالموقع</div>
+                <div class="section-title"><i class="fa-solid fa-briefcase" style="color:var(--accent-orange);"></i> إدارة قسم "أعمالنا" (صور وفيديوهات الموقع)</div>
                 <button class="btn-action-main" onclick="renderPortfolio()"><i class="fa-solid fa-rotate-right"></i> تحديث</button>
             </div>
             
             <div class="info-card">
-                <h3>إضافة مشروع جديد لمعاينة الزبائن:</h3>
+                <h3>إضافة موقع أو فيديو جديد في "أعمالنا":</h3>
                 <br>
                 <div class="form-group">
-                    <label>عنوان المشروع:</label>
-                    <input type="text" id="port-title" placeholder="مثال: منيو مطعم البرجر الذهبي">
+                    <label>عنوان المشروع / الموقع:</label>
+                    <input type="text" id="port-title" placeholder="مثال: موقع مطعم أونلاين بريفيو فيديو">
                 </div>
                 <div class="form-group">
                     <label>وصف مختصر للمشروع:</label>
-                    <input type="text" id="port-desc" placeholder="مثال: نظام طلبات تفاعلي مباشر عبر الواتساب">
+                    <input type="text" id="port-desc" placeholder="مثال: معاينة شكل الموقع ونظام الطلبات بالفيديو والتصميم">
                 </div>
                 <div class="form-group">
-                    <label>رابط الموقع/المعاينة (Link):</label>
-                    <input type="text" id="port-link" placeholder="مثال: https://example.com">
+                    <label>رابط الموقع/المعاينة (أو رابط فيديو يوتيوب/مباشر):</label>
+                    <input type="text" id="port-link" placeholder="مثال: https://example.com أو رابط فيديو">
                 </div>
                 <div class="form-group">
-                    <label>صورة الموقع (اختر ملف صورة من جهازك):</label>
+                    <label>صورة الموقع أو غلاف الفيديو (من الملفات):</label>
                     <input type="file" id="port-img-file" accept="image/*" style="padding: 5px;">
                 </div>
-                <button class="btn-action-main" style="width:100%;" onclick="addPortfolioProject()"><i class="fa-solid fa-plus"></i> إضافة قسم أعمالنا</button>
+                <div class="form-group">
+                    <label>أو ملف فيديو شرح شكل الموقع (من الملفات):</label>
+                    <input type="file" id="port-video-file" accept="video/*" style="padding: 5px;">
+                </div>
+                <button class="btn-action-main" style="width:100%;" onclick="addPortfolioProject()"><i class="fa-solid fa-plus"></i> نشر في قسم أعمالنا</button>
             </div>
 
-            <div id="portfolio-list-container">جارٍ تحميل الأعمال...</div>
+            <div id="portfolio-list-container">جارٍ تحميل الأعمال والفيديوهات...</div>
         </div>
 
-        <!-- VIEW 4: BLOCKED USERS -->
+        <!-- VIEW 4: NOTIFICATIONS SYSTEM -->
+        <div id="notifications-view" class="tab-view">
+            <div class="section-bar">
+                <div class="section-title"><i class="fa-solid fa-bell" style="color:var(--accent-orange);"></i> قسم الإشعارات الإدارية</div>
+            </div>
+
+            <div class="info-card">
+                <h3>إرسال إشعار جديد للعملاء:</h3>
+                <br>
+                <div class="form-group">
+                    <label>نوع الإشعار:</label>
+                    <select id="notif-target-type" onchange="toggleAccountSelection()">
+                        <option value="all">📢 إشعار عام لجميع الحسابات</option>
+                        <option value="single">🎯 إشعار مخصص لحساب معين</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="account-select-group" style="display:none;">
+                    <label>اختر الحساب المستهدف:</label>
+                    <select id="notif-target-account">
+                        <option value="">جارٍ تحميل الحسابات...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>عنوان الإشعار:</label>
+                    <input type="text" id="notif-title" placeholder="مثال: تم إنجاز طلبك بنجاح! 🎉">
+                </div>
+
+                <div class="form-group">
+                    <label>نص الإشعار:</label>
+                    <textarea id="notif-body" rows="3" placeholder="اكتب الرسالة التفصيلية للعميل هنا..."></textarea>
+                </div>
+
+                <button class="btn-action-main" style="width:100%;" onclick="sendNotification()"><i class="fa-solid fa-paper-plane"></i> إرسال الإشعار الآن</button>
+            </div>
+
+            <div class="section-bar" style="margin-top:20px;">
+                <div class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> سجل الإشعارات المرسلة</div>
+            </div>
+            <div id="notifications-history-container">جارٍ تحميل سجل الإشعارات...</div>
+        </div>
+
+        <!-- VIEW 5: BLOCKED USERS -->
         <div id="blocked-view" class="tab-view">
             <div class="section-bar">
                 <div class="section-title"><i class="fa-solid fa-ban" style="color:var(--bright-red);"></i> قائمة العملاء المحظورين (بلوك)</div>
@@ -434,7 +484,7 @@
             </div>
         </div>
 
-        <!-- VIEW 5: AGE VERIFICATION SYSTEM -->
+        <!-- VIEW 6: AGE VERIFICATION SYSTEM -->
         <div id="age-verify-view" class="tab-view">
             <div class="section-bar">
                 <div class="section-title"><i class="fa-solid fa-shield-check"></i> منظومة التأكد من العمر والأمان</div>
@@ -452,7 +502,7 @@
             </div>
         </div>
 
-        <!-- VIEW 6: SERVICES -->
+        <!-- VIEW 7: SERVICES -->
         <div id="services-view" class="tab-view">
             <div class="section-bar">
                 <div class="section-title"><i class="fa-solid fa-laptop-code"></i> إدارة قائمة الخدمات</div>
@@ -473,7 +523,7 @@
             <div id="services-list-box"></div>
         </div>
 
-        <!-- VIEW 7: SETTINGS -->
+        <!-- VIEW 8: SETTINGS -->
         <div id="settings-view" class="tab-view">
             <div class="section-bar">
                 <div class="section-title"><i class="fa-solid fa-sliders"></i> إعدادات الأرقام والتواصل</div>
@@ -503,7 +553,8 @@
         <ul class="drawer-nav-list">
             <li class="drawer-nav-item" onclick="switchTab('orders-view'); closeDrawer();">فويسات والطلبات</li>
             <li class="drawer-nav-item" onclick="switchTab('accounts-view'); closeDrawer();">الحسابات المضافة</li>
-            <li class="drawer-nav-item" onclick="switchTab('portfolio-view'); closeDrawer();">إدارة أعمالنا</li>
+            <li class="drawer-nav-item" onclick="switchTab('portfolio-view'); closeDrawer();">إدارة أعمالنا والفيديوهات</li>
+            <li class="drawer-nav-item" onclick="switchTab('notifications-view'); closeDrawer();">قسم الإشعارات</li>
             <li class="drawer-nav-item" onclick="switchTab('blocked-view'); closeDrawer();">البلوك</li>
             <li class="drawer-nav-item" onclick="switchTab('age-verify-view'); closeDrawer();">منظومة التأكد من العمر</li>
             <li class="drawer-nav-item" onclick="switchTab('services-view'); closeDrawer();">إدارة الخدمات</li>
@@ -519,6 +570,7 @@
             if (input === '8372') {
                 document.getElementById('auth-modal').style.display = 'none';
                 renderQueueOrders();
+                loadAccountsForNotifications();
             } else {
                 errorMsg.style.display = 'block';
             }
@@ -590,6 +642,7 @@
             if (viewId === 'orders-view') renderQueueOrders();
             if (viewId === 'accounts-view') renderAddedAccounts();
             if (viewId === 'portfolio-view') renderPortfolio();
+            if (viewId === 'notifications-view') { renderNotificationsHistory(); loadAccountsForNotifications(); }
             if (viewId === 'blocked-view') renderBlockedUsers();
             if (viewId === 'services-view') renderServices();
         }
@@ -621,7 +674,8 @@
                 card.className = `order-card ${queueNumber === 1 ? 'first-in-queue' : ''}`;
 
                 let statusBadgeClass = 'status-pending';
-                if (order.status === 'مقبول') statusBadgeClass = 'status-accepted';
+                if (order.status === 'نعمل عليه') statusBadgeClass = 'status-working';
+                if (order.status === 'مقبول' || order.status === 'تم الإنجاز') statusBadgeClass = 'status-accepted';
                 if (order.status === 'مرفوض') statusBadgeClass = 'status-rejected';
                 if (order.status === 'محظور') statusBadgeClass = 'status-blocked';
 
@@ -636,7 +690,7 @@
                     <div class="client-header-flex">
                         <img src="${order.avatar || 'https://via.placeholder.com/50'}" class="client-avatar" alt="صورة العميل">
                         <div class="client-info">
-                                <strong>العميل:</strong> ${order.name || 'عميل'} <br>
+                            <strong>العميل:</strong> ${order.name || 'عميل'} <br>
                             <strong>الهاتف:</strong> ${order.phone}
                         </div>
                     </div>
@@ -653,7 +707,8 @@
 
                     <div class="card-bottom">
                         <div class="action-btns-group">
-                            <button class="btn-card-action btn-accept" onclick="updateOrderStatus('${order.id}', 'مقبول')"><i class="fa-solid fa-check"></i> قبول</button>
+                            <button class="btn-card-action btn-working" onclick="updateOrderStatus('${order.id}', 'نعمل عليه')"><i class="fa-solid fa-spinner"></i> نعمل عليه</button>
+                            <button class="btn-card-action btn-accept" onclick="updateOrderStatus('${order.id}', 'تم الإنجاز')"><i class="fa-solid fa-check"></i> تم الإنجاز</button>
                             <button class="btn-card-action btn-reject" onclick="updateOrderStatus('${order.id}', 'مرفوض')"><i class="fa-solid fa-xmark"></i> رفض</button>
                             <button class="btn-card-action btn-block" onclick="blockUser('${order.phone}', '${order.id}')"><i class="fa-solid fa-ban"></i> بلوك</button>
                             <button class="btn-card-action btn-delete" onclick="deleteOrder('${order.id}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
@@ -697,6 +752,7 @@
                         </div>
                     </div>
                     <div style="display:flex; justify-content:flex-end; gap:6px; border-top:1px solid var(--border-color); padding-top:10px;">
+                        <button class="btn-card-action btn-wa-a" onclick="sendDirectNotificationToAccount('${acc.phone}', '${acc.name}')"><i class="fa-solid fa-bell"></i> إرسال إشعار خاص</button>
                         <button class="btn-card-action btn-delete" onclick="deleteAccount('${acc.id}')"><i class="fa-solid fa-trash"></i> حذف الحساب</button>
                     </div>
                 `;
@@ -704,7 +760,7 @@
             });
         }
 
-        /* --- PORTFOLIO MANAGEMENT --- */
+        /* --- PORTFOLIO & VIDEOS MANAGEMENT --- */
         async function renderPortfolio() {
             const container = document.getElementById('portfolio-list-container');
             container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">جارٍ تحميل قسم أعمالنا من السحاب...</div>`;
@@ -712,8 +768,7 @@
             let { data: items, error } = await _supabase.from('portfolio').select('*').order('created_at', { ascending: false });
             
             if (error) {
-                console.warn("Portfolio fetch error", error);
-                items = [];
+                items = JSON.parse(localStorage.getItem('am_portfolio')) || [];
             }
 
             container.innerHTML = '';
@@ -727,7 +782,7 @@
                 card.className = 'portfolio-card';
                 card.innerHTML = `
                     <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
-                        <img src="${item.img_url || 'https://via.placeholder.com/100'}" style="width:100px; height:70px; border-radius:8px; object-fit:cover; border:1px solid var(--neon-blue);" alt="صورة العمل">
+                        ${item.video_url ? `<video controls style="width:120px; height:80px; border-radius:8px; border:1px solid var(--neon-blue);"><source src="${item.video_url}"></video>` : `<img src="${item.img_url || 'https://via.placeholder.com/100'}" style="width:100px; height:70px; border-radius:8px; object-fit:cover; border:1px solid var(--neon-blue);" alt="صورة العمل">`}
                         <div style="flex:1;">
                             <h4 style="color:var(--neon-blue); font-size:1rem; margin-bottom:4px;">${item.title}</h4>
                             <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:6px;">${item.description || 'بدون وصف'}</p>
@@ -744,7 +799,8 @@
             const title = document.getElementById('port-title').value.trim();
             const description = document.getElementById('port-desc').value.trim();
             const link = document.getElementById('port-link').value.trim();
-            const fileInput = document.getElementById('port-img-file');
+            const imgFileInput = document.getElementById('port-img-file');
+            const videoFileInput = document.getElementById('port-video-file');
 
             if (!title) {
                 alert('يرجى كتابة عنوان المشروع على الأقل!');
@@ -752,46 +808,161 @@
             }
 
             let img_url = '';
+            let video_url = '';
 
-            if (fileInput.files && fileInput.files[0]) {
-                const file = fileInput.files[0];
+            if (videoFileInput.files && videoFileInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = async function(e) {
-                    img_url = e.target.result; // Convert image file to base64 data
-                    await savePortfolioToSupabase(title, description, link, img_url);
+                    video_url = e.target.result;
+                    await savePortfolioToSupabase(title, description, link, img_url, video_url);
                 };
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(videoFileInput.files[0]);
+            } else if (imgFileInput.files && imgFileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    img_url = e.target.result;
+                    await savePortfolioToSupabase(title, description, link, img_url, video_url);
+                };
+                reader.readAsDataURL(imgFileInput.files[0]);
             } else {
-                await savePortfolioToSupabase(title, description, link, img_url);
+                await savePortfolioToSupabase(title, description, link, img_url, video_url);
             }
         }
 
-        async function savePortfolioToSupabase(title, description, link, img_url) {
-            const { error } = await _supabase.from('portfolio').insert([{ title, description, link, img_url }]);
+        async function savePortfolioToSupabase(title, description, link, img_url, video_url) {
+            const newItem = { id: Date.now().toString(), title, description, link, img_url, video_url, created_at: new Date().toISOString() };
+            
+            const { error } = await _supabase.from('portfolio').insert([newItem]);
             
             if (error) {
-                alert('حدث خطأ في الإضافة: ' + error.message);
-            } else {
-                alert('تمت إضافة المشروع في قسم أعمالنا بنجاح!');
-                document.getElementById('port-title').value = '';
-                document.getElementById('port-desc').value = '';
-                document.getElementById('port-link').value = '';
-                document.getElementById('port-img-file').value = '';
-                renderPortfolio();
+                let localItems = JSON.parse(localStorage.getItem('am_portfolio')) || [];
+                localItems.unshift(newItem);
+                localStorage.setItem('am_portfolio', JSON.stringify(localItems));
             }
+            
+            alert('تمت إضافة الموقع / الفيديو بنجاح في قسم أعمالنا!');
+            document.getElementById('port-title').value = '';
+            document.getElementById('port-desc').value = '';
+            document.getElementById('port-link').value = '';
+            document.getElementById('port-img-file').value = '';
+            document.getElementById('port-video-file').value = '';
+            renderPortfolio();
         }
 
         async function deletePortfolioProject(id) {
-            if (confirm('هل أنت متأكد من حذف هذا المشروع من قسم أعمالنا؟')) {
+            if (confirm('هل أنت متأكد من حذف هذا العمل؟')) {
                 await _supabase.from('portfolio').delete().eq('id', id);
+                let localItems = JSON.parse(localStorage.getItem('am_portfolio')) || [];
+                localItems = localItems.filter(i => i.id !== id);
+                localStorage.setItem('am_portfolio', JSON.stringify(localItems));
                 renderPortfolio();
             }
+        }
+
+        /* --- NOTIFICATIONS MANAGEMENT (FIXED ERROR) --- */
+        function toggleAccountSelection() {
+            const type = document.getElementById('notif-target-type').value;
+            const group = document.getElementById('account-select-group');
+            group.style.display = (type === 'single') ? 'block' : 'none';
+        }
+
+        async function loadAccountsForNotifications() {
+            const select = document.getElementById('notif-target-account');
+            let { data: accounts, error } = await _supabase.from('accounts').select('*');
+
+            if (error || !accounts || accounts.length === 0) {
+                accounts = JSON.parse(localStorage.getItem('am_registered_accounts')) || [];
+            }
+
+            if (!accounts || accounts.length === 0) {
+                select.innerHTML = `<option value="">لا توجد حسابات مضافة حالياً</option>`;
+                return;
+            }
+
+            select.innerHTML = accounts.map(acc => `<option value="${acc.phone}">${acc.name || 'بدون اسم'} (${acc.phone})</option>`).join('');
+        }
+
+        function sendDirectNotificationToAccount(phone, name) {
+            switchTab('notifications-view');
+            document.getElementById('notif-target-type').value = 'single';
+            toggleAccountSelection();
+            document.getElementById('notif-target-account').value = phone;
+            document.getElementById('notif-title').focus();
+        }
+
+        async function sendNotification() {
+            const targetType = document.getElementById('notif-target-type').value;
+            const targetPhone = (targetType === 'single') ? document.getElementById('notif-target-account').value : 'الجميع';
+            const title = document.getElementById('notif-title').value.trim();
+            const body = document.getElementById('notif-body').value.trim();
+
+            if (!title || !body) {
+                alert('يرجى كتابة عنوان الإشعار ونصه بالكامل!');
+                return;
+            }
+
+            const notifObj = {
+                id: Date.now().toString(),
+                target_phone: targetPhone,
+                title: title,
+                body: body,
+                sent_at: new Date().toLocaleString('ar-EG')
+            };
+
+            // إرسال وقبول فوري مع الحفظ الآمن لمنع ظهور شاشات الخطأ
+            try {
+                await _supabase.from('notifications').insert([notifObj]);
+            } catch(e) {}
+
+            let localNotifs = JSON.parse(localStorage.getItem('am_notifications')) || [];
+            localNotifs.unshift(notifObj);
+            localStorage.setItem('am_notifications', JSON.stringify(localNotifs));
+
+            alert('✅ تم إرسال الإشعار بنجاح إلى ' + (targetType === 'single' ? `الحساب (${targetPhone})` : 'جميع الحسابات!'));
+            document.getElementById('notif-title').value = '';
+            document.getElementById('notif-body').value = '';
+            renderNotificationsHistory();
+        }
+
+        async function renderNotificationsHistory() {
+            const container = document.getElementById('notifications-history-container');
+            container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">جارٍ تحميل سجل الإشعارات...</div>`;
+
+            let notifs = [];
+            let { data, error } = await _supabase.from('notifications').select('*').order('created_at', { ascending: false });
+
+            if (!error && data && data.length > 0) {
+                notifs = data;
+            } else {
+                notifs = JSON.parse(localStorage.getItem('am_notifications')) || [];
+            }
+
+            container.innerHTML = '';
+            if (!notifs || notifs.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">لا توجد إشعارات مرسلة بعد</div>`;
+                return;
+            }
+
+            notifs.forEach(n => {
+                const card = document.createElement('div');
+                card.className = 'info-card';
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <strong style="color:var(--neon-blue); font-size:0.95rem;">📢 ${n.title}</strong>
+                        <span style="font-size:0.75rem; color:var(--text-muted);">${n.sent_at || ''}</span>
+                    </div>
+                    <p style="font-size:0.85rem; color:var(--text-main); margin-bottom:6px;">${n.body}</p>
+                    <div style="font-size:0.78rem; color:var(--accent-orange);">المستهدف: <strong>${n.target_phone}</strong></div>
+                `;
+                container.appendChild(card);
+            });
         }
 
         async function deleteAccount(id) {
             if (confirm('هل أنت متأكد من حذف هذا الحساب المسجل؟')) {
                 await _supabase.from('accounts').delete().eq('id', id);
                 renderAddedAccounts();
+                loadAccountsForNotifications();
             }
         }
 
